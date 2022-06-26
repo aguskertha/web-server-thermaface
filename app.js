@@ -16,8 +16,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use('/public',express.static(path.join(__dirname, 'public')));
+app.use('/css', express.static(__dirname = 'public/css'));
+app.use('/js', express.static(__dirname = 'public/js'));
+app.use('/img', express.static(__dirname = 'public/img'));
+app.use('/vendor', express.static(__dirname = 'public/vendor'));
 
 const router =  require('./src/routes/routes');
+
 app.use('/', router);
 
 // catch 404 and forward to error handler
