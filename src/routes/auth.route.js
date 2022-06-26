@@ -1,7 +1,9 @@
 const router = require('express').Router();
-const { renderLogin, renderRegister } = require('./../controllers/auth.controller')
+const { renderLogin, renderRegister, login, register } = require('./../controllers/auth.controller')
 
-router.use('/login', renderLogin);
-router.use('/register', renderRegister);
+router.get('/login', renderLogin);
+router.get('/register', renderRegister);
+router.post('/login', login)
+router.post('/register', register)
 
 module.exports = router;
