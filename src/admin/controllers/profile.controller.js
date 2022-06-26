@@ -1,13 +1,12 @@
 
-const renderDashboard = async (req, res, next) => {
+const renderProfile = async (req, res, next) => {
     try {
         const {name, deviceID} = req.user
-        res.render('Admin/dashboard', {
+        res.render('Admin/profile', {
             layout: 'layouts/main',
             name,
             deviceID
         })
-        
     } catch (error) {
         res.render('error', {
             layout: 'layouts/main',
@@ -18,5 +17,5 @@ const renderDashboard = async (req, res, next) => {
 }
 
 module.exports = {
-    renderDashboard
+    renderProfile
 }
