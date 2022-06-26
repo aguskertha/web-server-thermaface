@@ -25,7 +25,7 @@ const renderRegister = async (req, res, next) => {
 const login = async (req, res, next) => {
     try {
         passport.authenticate('local', {
-            successRedirect: '/topic',
+            successRedirect: '/admin/dashboard',
             failureRedirect: '/auth/login',
             failureFlash: true
         })(req, res, next);
@@ -122,9 +122,27 @@ const register = async (req, res, next) => {
 }
 
 
+const logout = async (req, res, next) => {
+    try {
+        req.logout((err) => {
+            if (err) { return next(err); }
+            req.flash('success_msg', 'You are logged out!');
+            res.redirect('/auth/login');
+        });
+    } catch (error) {
+        res.render('error', {
+            layout: 'layouts/main-auth',
+            message: error,
+            status: 400
+        });
+    }
+}
+
+
 module.exports = {
     renderLogin,
     renderRegister,
     register,
-    login
+    login,
+    logout
 }
