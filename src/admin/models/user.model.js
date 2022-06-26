@@ -20,6 +20,14 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    company: {
+        type: String,
+        required: true
+    },
+    address: {
+        type: String,
+        required: true
+    },
     deviceID: {
         type: String,
         required: true
@@ -27,6 +35,9 @@ const userSchema = new Schema({
     deviceCode: {
         type: String,
         required: true
+    },
+    pictureURL: {
+        type: String,
     },
     createdAt: {
         type: String
