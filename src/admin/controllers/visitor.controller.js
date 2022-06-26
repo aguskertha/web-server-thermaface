@@ -1,14 +1,12 @@
 
-const renderProfile = async (req, res, next) => {
+const renderVisitor = async (req, res, next) => {
     try {
         const {name, deviceID, pictureURL} = req.user
-        const user = req.user
-        res.render('Admin/profile', {
+        res.render('Admin/visitor', {
             layout: 'layouts/main',
             name,
             deviceID,
-            pictureURL,
-            user
+            pictureURL
         })
     } catch (error) {
         res.render('error', {
@@ -20,5 +18,5 @@ const renderProfile = async (req, res, next) => {
 }
 
 module.exports = {
-    renderProfile
+    renderVisitor
 }

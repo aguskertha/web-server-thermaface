@@ -61,20 +61,20 @@
             </li>
            <!-- Nav Item - Tables -->
            <li class="nav-item">
-            <a class="nav-link" href="/visitor">
+            <a class="nav-link" href="/admin/visitor">
                 <i class="fas fa-fw fa-table"></i>
                 <span>Monitoring Pengunjung</span></a>
             </li>
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link" href="/absensi">
+                <a class="nav-link" href="/admin/attendance">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Absensi Pengunjung</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="/device">
+                <a class="nav-link" href="/admin/device">
                     <i class="fas fa-tablet-alt"></i>
                     <span>Device</span></a>
             </li>
@@ -247,7 +247,7 @@
                             </ul>
                             <div class="dropdown">
                                 <a href="#" class="d-flex align-items-center text-black text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="/img/profile.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
+                                    <img src="<%= typeof pictureURL != 'undefined' ? pictureURL : '/public/img/profile.png' %>" alt="hugenerd" width="30" height="30" class="rounded-circle">
                                     <span class="d-none d-sm-inline mx-1"><%= typeof name != 'undefined' ? name : 'Admin' %></span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow">

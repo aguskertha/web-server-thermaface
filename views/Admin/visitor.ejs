@@ -1,0 +1,123 @@
+
+
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <h2 style="font-family: san-serif;" class="text-left font-weight-bold ml-3">Monitoring Pengunjung</h2>
+        <a style="text-decoration:none; color: rgb(102, 99, 99); margin-left: 15px;" href="/dasboard">Home</a> / Monitoring Pengunjung
+   
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4 mt-4" style="padding: 20px;">
+           <div class="row mt-4 ml-3 mr-3">
+            <div class="col-md-4">
+                
+                <label class="my-1 mr-2">Filter Based on Date range:</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="far fa-clock"></i></span>
+                    </div>
+                    <input type="text" name="daterange" class="form-control float-right" id="reservationtime">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label class="my-1 mr-2">Device & Group Id:</label>
+                <div class="input-group">
+                    <select class="form-control" id="deviceId">
+                        <option selected value="TF0187">TF0187</option>
+                                                                                                            </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <i class="fas fa-chart-pie"> <span>Statistic:</span></i> 
+                <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                       
+                        <th style="background-color: rgb(0, 0, 255); color: white; " scope="col" class="text-center">Recognition Count</th>
+                        <th style="background-color: rgb(42, 179, 7); color: white; " scope="col" class="text-center">Normal Count</th>
+                        <th style="background-color: rgb(255, 40, 40); color: white; " scope="col" class="text-center">Abnormal Count</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                   
+                        <td class="text-center" style="background-color: rgb(0, 0, 255); color: white; ">0</td>
+                        <td class="text-center" style="background-color: rgb(42, 179, 7); color: white; ">0</td>
+                        <td class="text-center" style="background-color: rgb(255, 40, 40); color: white; ">0</td>
+                      </tr>
+                   
+                    </tbody>
+                  </table>
+                </div>
+            </div>
+           </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="ml-3 mr-auto">
+                <a href="" class="btn btn-primary mb-2"><i class="far fa-file-pdf"></i> Export PDF</a>
+                <a href="" class="btn btn-success mb-2"> 
+                    <i class="far fa-file-excel"></i> Export Excel
+                </a>
+            </div>
+<div class="ml-auto mr-3">
+    <span>Search :</span>
+                <form class="d-none d-sm-inline-block form-inline">
+                <div class="input-group">
+                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                        aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fas fa-search fa-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Datetime</th>
+                                <th>Photo</th>
+                                <th>Name</th>
+                                <th>Temperatur</th>
+                                <th>Status Temp</th>
+                                <th>Status Mask</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+
+                            <tr>
+                                <td>Donna Snider</td>
+                                <td>Customer Support</td>
+                                <td>New York</td>
+                                <td>27</td>
+                                <td>2011/01/25</td>
+                                <td>$112,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-end">
+                          <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Previous</a>
+                          </li>
+                          <li class="page-item"><a class="page-link" href="#">1</a></li>
+                          <li class="page-item"><a class="page-link" href="#">2</a></li>
+                          <li class="page-item"><a class="page-link" href="#">3</a></li>
+                          <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                          </li>
+                        </ul>
+                      </nav>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.container-fluid -->
+
+
+

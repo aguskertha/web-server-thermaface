@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
+var fileUpload = require('express-fileupload')
 var app = express();
 const expressLayouts = require('express-ejs-layouts');
 const flash = require('connect-flash');
@@ -12,6 +13,7 @@ const passport = require('passport');
 require('./src/utils/passport')(passport);
 require('dotenv').config();
 
+app.use(fileUpload())
 app.use(session({
   secret: 'secret',
   resave: true,

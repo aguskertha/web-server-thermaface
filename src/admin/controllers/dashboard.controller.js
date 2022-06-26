@@ -1,11 +1,13 @@
 
 const renderDashboard = async (req, res, next) => {
     try {
-        const {name, deviceID} = req.user
+        const {name, deviceID, pictureURL} = req.user
         res.render('Admin/dashboard', {
             layout: 'layouts/main',
             name,
-            deviceID
+            deviceID,
+            pictureURL
+            
         })
         
     } catch (error) {
