@@ -3,7 +3,8 @@
     <div class="forms-container">
     
         <div class="signin-signup">
-            <form action="#" class="sign-in-form">
+            <% include ./../partials/messages %> 
+            <form action="/auth/login" method="post" class="sign-in-form">
                 <img src="/img/logo.png" width="30%" alt="">
             <h2 class="title">Sign In</h2>
             <div class="input-field"> 

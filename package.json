@@ -13,6 +13,16 @@
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "nodemon": "^2.0.16",
-    "express-ejs-layouts": "^2.5.0"
+    "express-ejs-layouts": "^2.5.0",
+    "mongoose": "^6.3.4",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
+    "moment": "^2.29.3",
+    "cors": "^2.8.5",
+    "axios": "^0.27.2",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.0.1",
+    "express-session": "^1.17.3",
+    "connect-flash": "^0.1.1"
   }
 }
