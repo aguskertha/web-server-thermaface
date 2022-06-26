@@ -39,6 +39,16 @@ const createVisitor = async (req, res, next) => {
     }
 }
 
+const getVisitors = async (req, res, next) => {
+    try {
+        const visitors = await Visitor.find().sort({createdAt: -1})
+        res.json(visitors)
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
 module.exports = {
-    createVisitor
+    createVisitor,
+    getVisitors
 }
