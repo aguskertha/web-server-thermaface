@@ -1,0 +1,29 @@
+version: "3.7"
+services:
+  thermaface-app:
+    container_name: thermaface-app
+    build: .
+    links:
+      - thermaface-mongo
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "5005:5005"
+    environment:
+      - PORT=5005
+      - APP_HOST=http://localhost:5005
+      - DB_SERVICE=thermaface-mongo
+      - DB_PORT=27017
+      - DB_NAME=thermafaceDB
+  thermaface-mongo:
+    image: mongo:latest # use the latest image.
+    container_name: thermaface-mongo
+    restart: always
+    environment: # set required env variables to access mongo
+      MONGO_INITDB_DATABASE: thermafaceDB
+    ports:
+      - 27017:27017
+    volumes: # optional to preserve database after container is deleted.
+      - ./db/data:/data/db
+  
