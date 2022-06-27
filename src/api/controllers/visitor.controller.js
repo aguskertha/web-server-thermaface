@@ -48,7 +48,20 @@ const getVisitors = async (req, res, next) => {
     }
 }
 
+const getCountVisitors = async (req, res, next) => {
+    try {
+        let visitors = await Visitor.find()
+        if(req.query.status){
+            visitors = await Visitor.find({stTemp: req.query.status})
+        }
+        res.json(visitors.length)
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
 module.exports = {
     createVisitor,
-    getVisitors
+    getVisitors,
+    getCountVisitors
 }
