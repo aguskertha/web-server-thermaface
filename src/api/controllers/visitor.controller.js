@@ -61,6 +61,23 @@ const getCountVisitors = async (req, res, next) => {
     }
 }
 
+const getCountVisitorsByDeviceID = async (req, res, next) => {
+    try {
+        const deviceID = req.params.deviceID;
+        const device = await Device.findOne({deviceID})
+        if(!device){
+            throw `Device with deviceID: ${deviceID} not found!`
+        }
+        let visitors = await Visitor.find({deviceID})
+        if(req.query.status){
+            visitors = await Visitor.find({stTemp: req.query.status, deviceID})
+        }
+        res.json(visitors.length)
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
 const getVisitorsByDeviceID = async (req, res, next) => {
     try {
         const deviceID = req.params.deviceID;
@@ -104,5 +121,6 @@ module.exports = {
     getCountVisitors,
     getVisitorsByDeviceID,
     deleteVisitors,
-    deleteVisitorsByDeviceID
+    deleteVisitorsByDeviceID,
+    getCountVisitorsByDeviceID
 }
