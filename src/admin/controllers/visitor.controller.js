@@ -3,12 +3,13 @@ const axios = axiosLib.create({baseURL: process.env.APP_HOST});
 
 const renderVisitor = async (req, res, next) => {
     try {
-        const visitors = await axios.get('/api/visitor')
-        const countNormalVisitors = await axios.get('/api/visitor/count?status=NORMAL')
-        const countAbnormalVisitors = await axios.get('/api/visitor/count?status=ABNORMAL')
-        const countAllVisitors = await axios.get('/api/visitor/count')
-        
         const {name, deviceID, pictureURL} = req.user
+        
+        const visitors = await axios.get('/api/visitor/device/'+deviceID)
+        const countNormalVisitors = await axios.get('/api/visitor/device/'+deviceID+'/count?status=NORMAL')
+        const countAbnormalVisitors = await axios.get('/api/visitor/device/'+deviceID+'/count?status=ABNORMAL')
+        const countAllVisitors = await axios.get('/api/visitor/device/'+deviceID+'/count')
+        
         res.render('Admin/visitor', {
             layout: 'layouts/main',
             name,
