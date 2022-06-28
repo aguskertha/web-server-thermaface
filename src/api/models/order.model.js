@@ -3,20 +3,23 @@ const Schema = mongoose.Schema;
 const moment = require('moment');
 
 const orderSchema = new Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    password: {
-        type: String,
-        required: true,
-    },
     product: {
         type: mongoose.Schema.Types.Mixed,
         required: true
     },
     quantity: {
+        type: Number,
+        required: true
+    },
+    address: {
+        type: String,
+        required: true
+    },
+    phone: {
+        type: String,
+        required: true
+    },
+    postalCode: {
         type: Number,
         required: true
     },
@@ -26,6 +29,10 @@ const orderSchema = new Schema({
     },
     transferImageURL: {
         type: String,
+    },
+    clientID: {
+        type: String,
+        required: true
     },
     createdAt: {
         type: String
