@@ -5,6 +5,8 @@ const ObjectID = require('mongodb').ObjectId;
 const fs = require('fs');
 const sharp = require('sharp');
 const moment = require('moment');
+const axiosLib = require('axios')
+const axios = axiosLib.create({baseURL: process.env.APP_HOST});
 
 const renderLogin = async (req, res, next) => {
     try {
@@ -57,6 +59,11 @@ const register = async (req, res, next) => {
             errors.push({message: 'Password should be at least 6 characters!'});
         }
 
+        try {
+            await axios.get('/api/device/'+deviceID)
+        } catch (error) {
+            errors.push({message: `Device with deviceID: ${deviceID} not found!`});
+        }
         if(errors.length > 0 ){
             res.render('Admin/register', {
                 layout: 'layouts/main-auth',
