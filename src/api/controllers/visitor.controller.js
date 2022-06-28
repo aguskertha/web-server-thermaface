@@ -3,6 +3,7 @@ const fs = require('fs');
 const sharp = require('sharp');
 const moment = require('moment');
 const Visitor = require('./../models/visitor.model')
+const Device = require('./../models/device.model')
 
 const createVisitor = async (req, res, next) => {
     try {
@@ -60,8 +61,48 @@ const getCountVisitors = async (req, res, next) => {
     }
 }
 
+const getVisitorsByDeviceID = async (req, res, next) => {
+    try {
+        const deviceID = req.params.deviceID;
+        const device = await Device.findOne({deviceID})
+        if(!device){
+            throw `Device with deviceID: ${deviceID} not found!`
+        }
+        const visitors = await Visitor.find({deviceID}).sort({createdAt: -1})
+        res.json(visitors)
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
+const deleteVisitors = async (req, res, next) => {
+    try {
+        await Visitor.deleteMany()
+        res.json({message: 'Visitors successfully deleted!'})
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
+const deleteVisitorsByDeviceID = async (req, res, next) => {
+    try {
+        const deviceID = req.params.deviceID;
+        const device = await Device.findOne({deviceID})
+        if(!device){
+            throw `Device with deviceID: ${deviceID} not found!`
+        }
+        await Visitor.deleteMany({deviceID})
+        res.json({message: 'Visitors successfully deleted!'})
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
 module.exports = {
     createVisitor,
     getVisitors,
-    getCountVisitors
+    getCountVisitors,
+    getVisitorsByDeviceID,
+    deleteVisitors,
+    deleteVisitorsByDeviceID
 }
