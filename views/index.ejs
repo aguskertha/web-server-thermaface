@@ -441,7 +441,7 @@
                 <p><%= product.description %></p>
                 <div class="btn-wrap">
                   <h5><sup>Stock </sup><%= product.stock %> <span> pcs</span></h5>
-                  <a onclick="buyProduct('<%= product._id %>')" class="btn-buy">Buy Now</a>
+                  <a onclick="buyProduct('<%= product._id %>')" class="btn-buy" role="button">Buy Now</a>
                 </div>
               </div>
             </div>
@@ -781,10 +781,11 @@
     }
 
     function buyProduct(productID){
-      postProduct('/client', {productID})
-        .then(data => {
-          console.log(data); 
-        });
+      // postProduct('/client', {productID})
+      //   .then(data => {
+      //     console.log(data); 
+      //   });
+      // fetch('https://ubahthebuilder.tech/posts/1');
     }
 
   </script>
