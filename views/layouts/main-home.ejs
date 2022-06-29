@@ -80,8 +80,11 @@
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav><!-- .navbar -->
-
-      <a href="/auth/login" class="appointment-btn scrollto">Login</a>
+      <% if (client != null) { %>
+        <a href="/logout" class="appointment-btn scrollto bg-danger">Logout</a>
+      <% }else{%>
+        <a href="/auth/login" class="appointment-btn scrollto">Login</a>
+      <% } %> 
 
     </div>
   </header>

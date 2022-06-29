@@ -14,10 +14,17 @@ require('./src/utils/passport')(passport);
 require('dotenv').config();
 
 app.use(fileUpload())
+// app.use(session({
+//   secret: 'secret',
+//   resave: true,
+//   saveUninitialized: true,
+// }));
+const oneDay = 1000 * 60 * 60 * 24;
 app.use(session({
-  secret: 'secret',
-  resave: true,
-  saveUninitialized: true,
+  secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
+  saveUninitialized:true,
+  cookie: { maxAge: oneDay },
+  resave: false
 }));
 
 app.use(passport.initialize());
@@ -29,6 +36,7 @@ app.use((req, res, next) => {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
   res.locals.error = req.flash('error');
+  res.locals.clientID = req.flash('clientID');
   next();
 });
 

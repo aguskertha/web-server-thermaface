@@ -9,6 +9,7 @@
                 </a>
                 <h2 class="title">Sign In</h2>
             <% include ./../partials/messages %> 
+            
             <div class="input-field"> 
                 <i class="fas fa-user"></i>
                 <input type="text" name="email" placeholder="Email" />
@@ -16,6 +17,10 @@
             <div class="input-field">
                 <i class="fas fa-lock"></i>
                 <input type="password" name="password" placeholder="Password" />
+            </div>
+            <div class="form-check form-switch my-4">
+                <input class="form-check-input" name="admin" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Admin</label>
             </div>
             <input type="submit" value="Login" class="btn transparent" />
             <p class="social-text">Or Sign in with social platforms</p>
@@ -45,7 +50,9 @@
         <p>
         Daftar Disini Jika anda Belum Memiliki Akun Thermaface!
         </p>
-        <a class="btn transparent" href="/auth/register">Register</a>
+        <h3 class="mb-3">REGISTER</h3>
+        <a class="btn transparent bg-primary" href="/register">Client</a>
+        <a class="btn transparent bg-secondary" href="/auth/register">Admin</a>
         </div>
         <img src="/img/thermaface.png" class="image" alt="" />
     </div>

@@ -1,7 +1,9 @@
 const router = require('express').Router()
-const { createClient, validateClient} = require('./../controllers/client.controller')
+const { createClient, validateClient, getClientByEmail, getClientByID} = require('./../controllers/client.controller')
 
 router.post('/', createClient)
-router.get('/validate', validateClient)
+router.get('/:clientID', getClientByID)
+router.get('/email/:email', getClientByEmail)
+router.post('/validate', validateClient)
 
 module.exports = router

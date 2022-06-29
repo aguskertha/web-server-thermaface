@@ -6,6 +6,9 @@
     <div class="container">
       <div class="row">
         <div style="margin-top: -80px;" class="col-lg-6 d-flex flex-column justify-content-center pt-4 pt-lg-0 order-2 order-lg-1" data-aos="fade-up" data-aos-delay="200" id="home">
+          <% if (client != null) { %>
+           <h3 class="text-info">Hallo, <%= client.email %></h3>
+          <% } %>
           <h1>Thermaface</h1>
           <h2>Inovasi Pendeteksi Suhu Tubuh, Masker, dan Cuci Tangan Otomatis Berbasis Pengenalan Wajah Sebagai Pencegahan Penularan Covid-19</h2>
           <div class="d-flex justify-content-center justify-content-lg-start">
@@ -426,25 +429,25 @@
         </div>
 
         <div class="row">
-
-          <div class="col-lg-3 col-md-6">
-            <div class="box" data-aos="fade-up" data-aos-delay="100">
-              <h3>Free</h3>
-              <h4><sup>$</sup>0<span> / month</span></h4>
-              <ul>
-                <li>Aida dere</li>
-                <li>Nec feugiat nisl</li>
-                <li>Nulla at volutpat dola</li>
-                <li class="na">Pharetra massa</li>
-                <li class="na">Massa ultricies mi</li>
-              </ul>
-              <div class="btn-wrap">
-                <a href="#" class="btn-buy">Buy Now</a>
+          <% for( let index = 0; index < products.length; index++ ) { %>
+          <% const product = products[index] %> 
+            <div class="col-lg-6 col-md-6">
+              <div class="box" data-aos="fade-up" data-aos-delay="100">
+                <h3><%= product.name %></h3>
+                <h4><sup>Rp</sup><%= product.price %> <span></span></h4>
+                <img src="<%= product.imageURL %>" height="5%" alt="">
+                <br>
+                <br>
+                <p><%= product.description %></p>
+                <div class="btn-wrap">
+                  <h5><sup>Stock </sup><%= product.stock %> <span> pcs</span></h5>
+                  <a onclick="buyProduct('<%= product._id %>')" class="btn-buy">Buy Now</a>
+                </div>
               </div>
             </div>
-          </div>
+          <% } %>
 
-          <div class="col-lg-3 col-md-6 mt-4 mt-md-0">
+          <!-- <div class="col-lg-3 col-md-6 mt-4 mt-md-0">
             <div class="box featured" data-aos="fade-up" data-aos-delay="200">
               <h3>Business</h3>
               <h4><sup>$</sup>19<span> / month</span></h4>
@@ -494,7 +497,7 @@
                 <a href="#" class="btn-buy">Buy Now</a>
               </div>
             </div>
-          </div>
+          </div> -->
 
         </div>
 
@@ -764,4 +767,25 @@
     </section><!-- End Contact Section -->
 
   </main><!-- End #main -->
+
+  <script>
+    async function postProduct(url = '', data = {}) {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      return response.json(); 
+    }
+
+    function buyProduct(productID){
+      postProduct('/client', {productID})
+        .then(data => {
+          console.log(data); 
+        });
+    }
+
+  </script>
 

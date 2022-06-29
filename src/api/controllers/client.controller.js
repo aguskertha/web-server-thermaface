@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const Client = require('./../models/client.model')
+const ObjectID = require('mongodb').ObjectId;
 
 const createClient = async (req, res, next) => {
     try {
@@ -31,7 +32,32 @@ const validateClient = async (req, res, next) => {
     }
 }
 
+const getClientByEmail = async (req, res, next) => {
+    try {
+        const clientEmail = req.params.email
+        const client = await Client.findOne({email: clientEmail})
+        res.json(client)
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
+const getClientByID = async (req, res, next) => {
+    try {
+        const clientID = req.params.clientID
+        const client = await Client.findOne({_id: ObjectID(clientID)})
+        if(!client){
+            throw 'Client not found!'
+        }
+        res.json(client)
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
 module.exports = {
     createClient,
-    validateClient
+    validateClient,
+    getClientByEmail,
+    getClientByID
 }
