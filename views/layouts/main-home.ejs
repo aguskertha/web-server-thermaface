@@ -77,6 +77,18 @@
             </ul>
           </li> -->
           <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
+          <% if (client != null) { %> 
+          <li>
+            <button type="button" class="btn btn-primary position-relative mx-3" id="btn-cart" data-bs-toggle="modal" data-bs-target="#modalCart" onclick="doSomething()">
+              <i class="bi bi-cart-fill"></i>
+              <span id="cart-quantity" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                <%= cartCount %> 
+                <span class="visually-hidden">unread messages</span>
+              </span>
+            </button>
+            
+          </li>
+          <% } %>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav><!-- .navbar -->

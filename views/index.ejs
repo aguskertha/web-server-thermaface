@@ -8,6 +8,7 @@
         <div style="margin-top: -80px;" class="col-lg-6 d-flex flex-column justify-content-center pt-4 pt-lg-0 order-2 order-lg-1" data-aos="fade-up" data-aos-delay="200" id="home">
           <% if (client != null) { %>
            <h3 class="text-info">Hallo, <%= client.email %></h3>
+           <input type="hidden" value="<%= client._id %>" id="clientID">
           <% } %>
           <h1>Thermaface</h1>
           <h2>Inovasi Pendeteksi Suhu Tubuh, Masker, dan Cuci Tangan Otomatis Berbasis Pengenalan Wajah Sebagai Pencegahan Penularan Covid-19</h2>
@@ -441,7 +442,7 @@
                 <p><%= product.description %></p>
                 <div class="btn-wrap">
                   <h5><sup>Stock </sup><%= product.stock %> <span> pcs</span></h5>
-                  <a onclick="buyProduct('<%= product._id %>')" class="btn-buy" role="button">Buy Now</a>
+                  <a onclick="addToCart('<%= product._id %>')" class="btn-buy" role="button"><i class="bi bi-cart-fill"></i></a>
                 </div>
               </div>
             </div>
@@ -767,9 +768,65 @@
     </section><!-- End Contact Section -->
 
   </main><!-- End #main -->
-
+  <div class="modal fade" id="modalCart" role="dialog">
+    <div class="modal-dialog modal-lg bg-light rounded">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Cart</h4>
+            </div>
+            
+            <!-- Modal Body -->
+            <table class="table caption-top" cellspacing="0" width="100%">
+                <thead>
+                    <tr class="text-center">
+                        <th scope="col">No</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Qty</th>
+                        <th scope="col">Sub Total</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <img src="" alt="">
+                <tbody id="wrapperCart">
+                    <% for( let index = 0; index < carts.length; index++ ) { %>
+                    <% const cart = carts[index] %> 
+                    <tr style="white-space: nowrap;" class="align-middle text-center">
+                      <th scope="row"><%= index+1 %></th>
+                      <td><%= cart.product.name %></td>
+                      <td><img src="<%= cart.product.imageURL %>" alt="" height="100px"> </td>
+                      <td><%= cart.product.price %> </td>
+                      <td><input min="1" max="99" type="number" value="<%= cart.quantity %>"></td>
+                      <td><%= Number(cart.product.price * cart.quantity) %> </td>
+                      <td>No Action</td>
+                    </tr>
+                    <% } %>
+                
+                </tbody>
+            </table>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+               
+            </div>
+        </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script>
-    async function postProduct(url = '', data = {}) {
+    // $(function() {
+    //   $('#btn-cart').click(function(e){
+        
+    //   })
+    // })
+    function doSomething(){
+      console.log('haha')
+    }
+  </script>
+  <script>
+    async function postData(url = '', data = {}) {
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -780,12 +837,65 @@
       return response.json(); 
     }
 
-    function buyProduct(productID){
-      // postProduct('/client', {productID})
-      //   .then(data => {
-      //     console.log(data); 
-      //   });
+    async function getData(url = '') {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      })
+      return response.json(); 
+    }
+
+    function addToCart(productID){
+      const clientID = $('#clientID').val()
+      postData('/api/cart', {
+        clientID: clientID,
+        productID: productID,
+        quantity: 1
+      })
+      .then(data => {
+        getData('/api/cart/client/'+clientID)
+        .then(data => {
+          updateCountCart(data)
+
+          var wrapperCart = $("#wrapperCart"); 
+          $(wrapperCart).empty();
+          for (let index = 0; index < data.length; index++) {
+            const cart = data[index];
+            $(wrapperCart).append(
+              `
+              <tr style="white-space: nowrap;" class="align-middle text-center">
+                <th scope="row">${index+1}</th>
+                <td>${cart.product.name}</td>
+                <td>${cart.product.price}</td>
+                <td><img src="${cart.product.imageURL}" alt="" height="100px"> </td>
+                <td><input min="1" max="99" type="number" value="${cart.quantity}"></td>
+                <td>${Number(cart.product.price * cart.quantity)}</td>
+                <td>No Action</td>
+              </tr>
+              `
+            )
+            console.log(index)
+          }
+
+        })
+      });
       // fetch('https://ubahthebuilder.tech/posts/1');
+    }
+
+    function updateCountCart(data){
+      var cartCount = 0
+      data.forEach(cart => {
+        cartCount+=cart.quantity
+      });
+      var wrapperCart = $("#cart-quantity"); 
+      $(wrapperCart).empty();
+      $(wrapperCart).append(
+        `
+        ${cartCount}
+        `
+      )
     }
 
   </script>
