@@ -791,25 +791,38 @@
                 </thead>
                 <img src="" alt="">
                 <tbody id="wrapperCart">
+                    <% let total = 0 %> 
                     <% for( let index = 0; index < carts.length; index++ ) { %>
                     <% const cart = carts[index] %> 
+                    <% let mark = '' %>
+                    <% let role = '' %>
+                    <% if (cart.quantity > 1) { %>
+                     <% mark = '-fill' %> 
+                     <% role = 'button' %> 
+                    <% } %>  
+                    
                     <tr style="white-space: nowrap;" class="align-middle text-center">
                       <th scope="row"><%= index+1 %></th>
                       <td><%= cart.product.name %></td>
                       <td><img src="<%= cart.product.imageURL %>" alt="" height="100px"> </td>
                       <td><%= cart.product.price %> </td>
-                      <td><input min="1" max="99" type="number" value="<%= cart.quantity %>"></td>
+                      <td><a role="<%= role %>" onclick="decrementQuantity('<%= cart._id %>', '<%= cart.quantity %>')"><i class="bi bi-caret-left-square<%= mark %>"></i></a><a>  <%= cart.quantity %>  <a role="button" onclick="incrementQuantity('<%= cart._id %>', '<%= cart.quantity %>')"><i class="bi bi-caret-right-square-fill"></i></a></a></td>
                       <td><%= Number(cart.product.price * cart.quantity) %> </td>
-                      <td>No Action</td>
+                      <td><button class="btn btn-danger" onclick="deleteCart('<%= cart._id %>')"><i class="bi bi-trash"></i></button></td>
                     </tr>
+                    <% total += Number(cart.product.price * cart.quantity) %> 
                     <% } %>
                 
                 </tbody>
-            </table>
+              </table>
+
             
             <!-- Modal Footer -->
+            <div id="wrapperTotalCart">
+              <h5 class="float-end mx-3">Total : Rp<%= total %></h5><br>
+            </div>
             <div class="modal-footer">
-               
+              <button class="btn btn-primary">Checkout</button>            
             </div>
         </div>
     </div>
@@ -847,41 +860,85 @@
       return response.json(); 
     }
 
+    async function deleteData(url = '') {
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      })
+      return response.json(); 
+    }
+
+    function deleteCart(cartID){
+      const clientID = $('#clientID').val()
+      var result = confirm('Are you sure to delete the Item?');
+      if(result){
+        deleteData('/api/cart/'+cartID)
+        .then(data => {
+          getData('/api/cart/client/'+clientID)
+          .then(data => {
+            updateCountCart(data)
+            updateListCart(data)
+          })
+        })
+      }
+    }
+
     function addToCart(productID){
       const clientID = $('#clientID').val()
-      postData('/api/cart', {
-        clientID: clientID,
-        productID: productID,
-        quantity: 1
-      })
-      .then(data => {
-        getData('/api/cart/client/'+clientID)
-        .then(data => {
-          updateCountCart(data)
-
-          var wrapperCart = $("#wrapperCart"); 
-          $(wrapperCart).empty();
-          for (let index = 0; index < data.length; index++) {
-            const cart = data[index];
-            $(wrapperCart).append(
-              `
-              <tr style="white-space: nowrap;" class="align-middle text-center">
-                <th scope="row">${index+1}</th>
-                <td>${cart.product.name}</td>
-                <td>${cart.product.price}</td>
-                <td><img src="${cart.product.imageURL}" alt="" height="100px"> </td>
-                <td><input min="1" max="99" type="number" value="${cart.quantity}"></td>
-                <td>${Number(cart.product.price * cart.quantity)}</td>
-                <td>No Action</td>
-              </tr>
-              `
-            )
-            console.log(index)
-          }
-
+      var result = confirm('Are you sure to add to Cart?');
+      if(result){
+        postData('/api/cart', {
+          clientID: clientID,
+          productID: productID,
+          quantity: 1
         })
-      });
-      // fetch('https://ubahthebuilder.tech/posts/1');
+        .then(data => {
+          getData('/api/cart/client/'+clientID)
+          .then(data => {
+            updateCountCart(data)
+            updateListCart(data)
+          })
+        });
+      }
+    }
+
+    function updateListCart(data){
+      var wrapperTotalCart = $("#wrapperTotalCart"); 
+      $(wrapperTotalCart).empty();
+      var wrapperCart = $("#wrapperCart"); 
+      $(wrapperCart).empty();
+      let total = 0
+      for (let index = 0; index < data.length; index++) {
+        const cart = data[index];
+        let mark = ''
+        let role = '' 
+        if (cart.quantity > 1) { 
+          mark = '-fill' 
+          role = 'button' 
+        } 
+        $(wrapperCart).append(
+          `
+          <tr style="white-space: nowrap;" class="align-middle text-center">
+            <th scope="row">${index+1}</th>
+            <td>${cart.product.name}</td>
+            <td><img src="${cart.product.imageURL}" alt="" height="100px"> </td>
+            <td>${cart.product.price}</td>
+            <td><a role="${role}" onclick="decrementQuantity('${cart._id}', '${cart.quantity}')"><i class="bi bi-caret-left-square${mark}"></i></a><a>  ${cart.quantity}  <a role="button" onclick="incrementQuantity('${cart._id}', '${cart.quantity}')"><i class="bi bi-caret-right-square-fill"></i></a></a></td>
+            <td>${Number(cart.product.price * cart.quantity)}</td>
+            <td><button class="btn btn-danger" onclick="deleteCart('${cart._id}')"><i class="bi bi-trash"></i></button></td>
+          </tr>
+          `
+        )
+        total+=Number(cart.product.price * cart.quantity)
+      }
+
+      $(wrapperTotalCart).append(
+        `
+        <h5 class="float-end mx-3">Total : Rp${total}</h5><br>
+        `
+      )
     }
 
     function updateCountCart(data){
@@ -896,6 +953,40 @@
         ${cartCount}
         `
       )
+    }
+
+    function decrementQuantity(cartID, quantity){
+      if(quantity <= 1){
+        alert('Minimum item quantity!')
+      }
+      else{
+        const clientID = $('#clientID').val()
+        postData('/api/cart/update/quantity', {
+          cartID: cartID,
+          quantity: Number(quantity)-1
+        })
+        .then(data => {
+          getData('/api/cart/client/'+clientID)
+            .then(data => {
+              updateCountCart(data)
+              updateListCart(data)
+            })
+        })
+      }
+    }
+    function incrementQuantity(cartID, quantity){
+      const clientID = $('#clientID').val()
+      postData('/api/cart/update/quantity', {
+        cartID: cartID,
+        quantity: Number(quantity)+1
+      })
+      .then(data => {
+        getData('/api/cart/client/'+clientID)
+          .then(data => {
+            updateCountCart(data)
+            updateListCart(data)
+          })
+      })
     }
 
   </script>
