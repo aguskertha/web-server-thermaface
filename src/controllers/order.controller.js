@@ -20,6 +20,30 @@ const couriers = [
     }
 ]
 
+const status = [
+    {
+        id: 0,
+        description: 'Not Paid'
+    },
+    {
+        id: 1,
+        description: 'Paid, Wait'
+    },
+    {
+        id: 2,
+        description: 'Packed'
+    },
+    {
+        id: 3,
+        description: 'Sent'
+    },
+    {
+        id: 4,
+        description: 'Received'
+    },
+
+]
+
 const renderOrder = async (req, res, next) => {
     try {
         const clientID = req.session.clientID
@@ -221,12 +245,16 @@ const renderOrderList = async (req, res, next) => {
             const arr = username.split('@')
             username = arr[0]
             let orders = await axios.get('/api/order/client/'+req.session.clientID)
+            if(req.session.admin){
+                orders = await axios.get('/api/order')
+            }
             orders = orders.data
             res.render('order-list', {
                 layout: 'layouts/main-auth',
                 orders,
                 client,
-                username
+                username,
+                status
             })
         }
         else{
@@ -283,7 +311,8 @@ const uploadPayment = async (req, res, next) => {
                         orders,
                         client,
                         username,
-                        errors
+                        errors,
+                        status
                     })
                 }
 
@@ -295,9 +324,52 @@ const uploadPayment = async (req, res, next) => {
                     orders,
                     client,
                     username,
+                    errors,
+                    status
+                })
+            }
+        }
+        else{
+            res.redirect('/')
+        }
+    } catch (error) {
+        
+    }
+}
+
+const updateOrderReceipt = async (req, res, next) => {
+    try {
+        const {orderID,receipt} = req.body
+        if(req.session.clientID){
+            let errors = []
+            let client = await axios.get('/api/client/'+req.session.clientID)
+            client = client.data
+            let username = client.email
+            const arr = username.split('@')
+            username = arr[0]
+            let orders = await axios.get('/api/order/client/'+req.session.clientID)
+            if(req.session.admin){
+                orders = await axios.get('/api/order')
+            }
+            orders = orders.data
+
+            const result = await axios.post('/api/order/receipt/'+orderID, {courierReceiptNumber: receipt})
+            if(result.status == 200){
+                req.flash('success_msg', result.data.message);
+                res.redirect('/order/list')
+            }
+            else{
+                errors.push({message: 'Failed Update!'})
+                    res.render('order-list', {
+                    layout: 'layouts/main-auth',
+                    orders,
+                    client,
+                    username,
+                    status,
                     errors
                 })
             }
+            
         }
         else{
             res.redirect('/')
@@ -313,5 +385,6 @@ module.exports = {
     getCitys,
     getCosts,
     renderOrderList,
-    uploadPayment
+    uploadPayment,
+    updateOrderReceipt
 }

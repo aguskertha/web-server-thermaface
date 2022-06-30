@@ -72,8 +72,9 @@
                         <th scope="col">City</th>
                         <th scope="col">Address</th>
                         <th scope="col">Postal Code</th>
-                        <th scope="col">Transfer</th>
                         <th scope="col">Total</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Transfer</th>
                         <th scope="col">Delivery</th>
                         <th scope="col">Products</th>
                         <th scope="col">Action</th>
@@ -90,6 +91,10 @@
                             <td><%= order.address %></td>
                             <td><%= order.postalCode %></td>
                             <td><%= order.total %></td>
+                            <% 
+                            const stts = status.find(data => data.id == order.paymentStatus)
+                            %> 
+                            <td class="h5"><%= stts.description %></td>
                             <% if (order.transferImageURL != '') { %>
                                 <td><a href="<%= order.transferImageURL %>" target="_blank"><img src="<%= order.transferImageURL %>" alt="" height="100px"></a></td>
                             <% } else{%>
@@ -100,9 +105,21 @@
                             <td><a role="button" class="btn btn-secondary btn-lg w-auto" id="btn-products" data-bs-toggle="modal" data-bs-target="#modalProducts" onclick="showProducts('<%= order._id %>')"><i class="bi bi-phone"></i></a></td>
                             
                             <% if (order.approve == false) { %>
-                                <td><a role="button" class="btn btn-warning btn-lg w-auto" id="btn-payment" data-bs-toggle="modal" data-bs-target="#modalPayment" onclick="uploadPayment('<%= order._id %>')"><i class="bi bi-upload"></i></a></td>
+                                <% if (client.admin) { %>
+                                    <% if (order.paymentStatus == 1) { %>
+                                        <td><a role="button" class="btn btn-success btn-lg w-auto" id="btn-approve" onclick="approveOrder('<%= order._id %>')"><i class="bi bi-check-circle"></i></a></td>
+                                    <% } %>
+                                <% } else {%>
+                                    <td><a role="button" class="btn btn-warning btn-lg w-auto" id="btn-payment" data-bs-toggle="modal" data-bs-target="#modalPayment" onclick="uploadPayment('<%= order._id %>')"><i class="bi bi-upload"></i></a></td>
+                                <% } %>
                             <% } else { %>
-                                <td><a href="/order/detail" role="button" class="btn btn-info btn-lg w-auto" id="btn-payment" ><i class="bi bi-receipt"></i></a></td>
+                                <% if (client.admin) { %>
+                                    <% if (order.paymentStatus == 2) { %>
+                                        <td><a role="button" class="btn btn-warning btn-lg w-auto" id="btn-receipt" data-bs-toggle="modal" data-bs-target="#modalReceipt" onclick="inputNumberReceipt('<%= order._id %>')"><i class="bi bi-pencil-square"></i></a></td>
+                                    <% } %>
+                                <% } else {%>
+                                    <td><a href="/order/detail" role="button" class="btn btn-info btn-lg w-auto" id="btn-payment" ><i class="bi bi-receipt"></i></a></td>
+                                <% }%>
                             <% } %> 
                         </tr>
                     <% } %>
@@ -123,7 +140,7 @@
             <!-- Modal Body -->
             <div id="delivery-wrapper">
             <div class="row">
-                <div class="col-md-5" >
+                <div class="col-md-6" >
                     <h1>Courier</h1>
                     <label for="">Name</label>
                     <h4>JNEAHH</h4>
@@ -206,6 +223,31 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalReceipt" role="dialog">
+    <div class="modal-dialog modal-lg bg-light rounded">
+        <div class="modal-content" align="center">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Input Receipt Number</h4>
+            </div>
+            
+            <!-- Modal Body -->
+                <form action="/order/receipt" method="post">
+                    <input type="hidden" name="orderID" id="orderID2" value="">
+                    <div class="input-field">
+                        <i class="fas fa-lock"></i>
+                        <input type="text" name="receipt" placeholder="Receipt Number" required />
+                    </div>
+                    <input type="submit" class="btn btn-primary">
+                </form>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="modalTransfer" role="dialog">
     <div class="modal-dialog modal-lg bg-light rounded">
         <div class="modal-content" align="center">
@@ -244,20 +286,26 @@
 <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.5.0/js/fileinput.min.js"></script>
 <script>
 
+    function inputNumberReceipt(orderID){
+        console.log(orderID)
+        var fieldOrderID = $('#orderID2')
+        $(fieldOrderID).val(orderID)
+    }
+
+    function approveOrder(orderID){
+        let confirmation = confirm('Are you sure to Approve this order?')
+        if(confirmation){
+            getData('/api/order/approve/'+orderID)
+            .then(data => {
+                alert(data.message)
+                location.reload();
+            })
+        }
+    }
+
     function uploadPayment(orderID){
         var fieldOrderID = $('#orderID')
         $(fieldOrderID).val(orderID)
-        // $(paymentWrapper).empty();
-        // $(paymentWrapper).append(
-        // `
-        // <form action="/order/payment/${orderID}" method="post" enctype="multipart/form-data">
-        //     <h4>BNI 0690694148</h4>
-        //     <p>Sdr Putu Bagus Kertha Segara</p>
-        //     <label for="formFileLg" class="form-label">Evidence of Transfer</label>
-        //     <input id="input-b1" name='picture' type="file" class="file" data-browse-on-zone-click="true" required>
-        // </form>
-        // `
-        // )
     }
 
     function showProducts(orderID){
@@ -297,12 +345,20 @@
     function showDelivery(orderID){
         getData('/api/order/delivery/'+orderID)
         .then(data => {
+            let courierReceiptNumber = data.courierReceiptNumber
+            if(data.courierReceiptNumber == ''){
+                courierReceiptNumber = '---'
+            }
             var deliveryWrapper = $('#delivery-wrapper')
             $(deliveryWrapper).empty();
             $(deliveryWrapper).append(
                 `
-                <div class="row">
-                <div class="col-md-5" >
+                <div class="row my-3">
+                <div class="col-md-12" >
+                    <label for="">Receipt Number</label>
+                    <h4>${courierReceiptNumber}</h4>
+                </div>
+                <div class="col-md-6" >
                     <h1>Courier</h1>
                     <label for="">Name</label>
                     <h4>${data.courier.name}</h4>

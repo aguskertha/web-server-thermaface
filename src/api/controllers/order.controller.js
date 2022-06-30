@@ -78,7 +78,7 @@ const getDeliveryOrderByID = async (req, res, next) => {
         const orderID = req.params.orderID
         const order = await Order.findOne({_id: ObjectID(orderID)})
         if(!order){
-            throw 'Order nor found!'
+            throw 'Order not found!'
         }
         let courierReceiptNumber = ''
         if(order.courierReceiptNumber){
@@ -138,11 +138,60 @@ const uploadPaymentOrderByID = async (req, res, next) => {
     }
 }
 
+const approveOrder = async (req, res, next) => {
+    try {
+        const orderID = req.params.orderID
+        const order = await Order.findOne({_id: ObjectID(orderID)})
+        if(!order){
+            throw 'Order not found!'
+        }
+        await Order.updateOne(
+            { _id: ObjectID(orderID) },
+            {
+                $set: {
+                    approve: true,
+                    paymentStatus: 2
+                }
+            }
+        )
+
+        res.json({message: 'Order approved successfully!'})
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
+const updateOrderReceipt = async (req, res, next) => {
+    try {
+        const orderID = req.params.orderID
+        const courierReceiptNumber = req.body.courierReceiptNumber
+        const order = await Order.findOne({_id: ObjectID(orderID)})
+        if(!order){
+            throw 'Order not found!'
+        }
+        await Order.updateOne(
+            { _id: ObjectID(orderID) },
+            {
+                $set: {
+                    paymentStatus: 3,
+                    courierReceiptNumber
+                }
+            }
+        )
+
+        res.json({message: 'Receipt Order successfully updated!'})
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
 module.exports = {
     createOrder,
     getOrders,
     getOrdersByClientID,
     getDeliveryOrderByID,
     getProductsOrderByID,
-    uploadPaymentOrderByID
+    uploadPaymentOrderByID,
+    approveOrder,
+    updateOrderReceipt
 }
