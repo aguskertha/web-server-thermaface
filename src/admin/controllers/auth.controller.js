@@ -43,6 +43,7 @@ const login = async (req, res, next) => {
                 const validate = await axios.post('/api/client/validate', {email, password})
                 const session = req.session
                 session.clientID = validate.data.clientID
+                session.admin = validate.data.admin
                 res.redirect('/');
             } catch (error) {
                 
@@ -52,50 +53,8 @@ const login = async (req, res, next) => {
                     email,
                     password
                 })
-            }
-            // console.log(validate)
-            // if(validate.status == 400){
-            //     console.log('aa')
-            // }
-            // if(validate.data){
-            //     const session = req.session
-            //     session.clientID = validate.data.clientID
-            //     res.redirect('/');
-            // }
-            // else{
-            //     throw 'Something wrong!'
-            // }
+            }   
         }
-        // const client = await axios.get('/api/client/email/'+email)
-        // if(client.data){
-        //     if(!client.data.deviceID){
-        //         const validate = await axios.post('/api/client/validate', {email, password})
-        //         // if(validate.data){
-        //         //     const session = req.session
-        //         //     session.clientID = validate.data.clientID
-        //         //     res.redirect('/');
-        //         // }
-        //         // else{
-        //         //     throw 'Something wrong!'
-        //         // }
-        //         console.log(validate)
-        //     }
-        //     else{
-        //         passport.authenticate('local', {
-        //             successRedirect: '/admin/dashboard',
-        //             failureRedirect: '/auth/login',
-        //             failureFlash: true
-        //         })(req, res, next);
-        //     }
-        // }
-        // else{
-        //     passport.authenticate('local', {
-        //         successRedirect: '/admin/dashboard',
-        //         failureRedirect: '/auth/login',
-        //         failureFlash: true
-        //     })(req, res, next);
-        // }
-
     } catch (error) {
         res.render('error', {
             layout: 'layouts/main-auth',

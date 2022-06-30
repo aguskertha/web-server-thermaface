@@ -12,6 +12,9 @@ const clientSchema = new Schema({
         type: String,
         required: true
     },
+    admin: {
+        type: Boolean,
+    },
     createdAt: {
         type: String
     },

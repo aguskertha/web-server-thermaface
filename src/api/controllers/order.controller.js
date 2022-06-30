@@ -12,7 +12,9 @@ const createOrder = async (req, res, next) => {
     try {
         let {province,city,courier,service,address,postalCode,name,phone,carts,total,clientID} = req.body
         let paymentStatus = 0
-        
+        let transferImageURL = ''
+        let courierReceiptNumber = ''
+        let approve = false
         const client = await Client.findOne({_id: ObjectID(clientID)})
         if(!client){
             throw 'Client not found!'
@@ -30,7 +32,10 @@ const createOrder = async (req, res, next) => {
                 carts,
                 total,
                 clientID,
-                paymentStatus
+                paymentStatus,
+                approve,
+                transferImageURL,
+                courierReceiptNumber
         }
 
         const newOrder = new Order(order)
@@ -97,11 +102,37 @@ const getProductsOrderByID = async (req, res, next) => {
         const orderID = req.params.orderID
         const order = await Order.findOne({_id: ObjectID(orderID)})
         if(!order){
-            throw 'Order nor found!'
+            throw 'Order not found!'
         }
 
         const products = order.carts
         res.json(products)
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
+const uploadPaymentOrderByID = async (req, res, next) => {
+    try {
+        const orderID = req.params.orderID
+        const {transferImageURL} = req.body
+        const order = await Order.findOne({_id: ObjectID(orderID)})
+        if(!order){
+            throw 'Order not found!'
+        }
+
+        await Order.updateOne(
+            { _id: ObjectID(orderID) },
+            {
+                $set: {
+                    transferImageURL: transferImageURL,
+                    paymentStatus: 1
+                }
+            }
+        )
+
+        res.json({message: 'Upload transfer successfully!'})
+
     } catch (error) {
         res.status(400).json({message: error.toString()})
     }
@@ -112,5 +143,6 @@ module.exports = {
     getOrders,
     getOrdersByClientID,
     getDeliveryOrderByID,
-    getProductsOrderByID
+    getProductsOrderByID,
+    uploadPaymentOrderByID
 }

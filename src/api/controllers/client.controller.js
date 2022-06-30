@@ -4,9 +4,9 @@ const ObjectID = require('mongodb').ObjectId;
 
 const createClient = async (req, res, next) => {
     try {
-        let {email, password} = req.body
+        let {email, password, admin} = req.body
         const hashPassword = await bcrypt.hash(password, 10)
-        const newClient = new Client({email, password:hashPassword})
+        const newClient = new Client({email, password:hashPassword, admin})
         await newClient.save();
         res.json({message: 'Client Successfully created!'})
         
@@ -26,7 +26,7 @@ const validateClient = async (req, res, next) => {
         if(!validPassword){
             throw 'Invalid Password!'
         }
-        res.json({clientID: client._id})
+        res.json({clientID: client._id, admin: client.admin})
     } catch (error) {
         res.status(400).json({message: error.toString()})
     }

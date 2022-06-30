@@ -1,6 +1,7 @@
 const router = require('express').Router()
-const { renderOrder, order, getCitys, getCosts, renderOrderList } = require('./../controllers/order.controller')
+const { renderOrder, order, getCitys, getCosts, renderOrderList, uploadPayment } = require('./../controllers/order.controller')
 
+router.post('/payment', uploadPayment)
 router.get('/', renderOrder)
 router.get('/list', renderOrderList)
 router.post('/', order)

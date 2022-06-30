@@ -1,6 +1,9 @@
 const axiosLib = require('axios')
 const axios = axiosLib.create({baseURL: process.env.APP_HOST});
 const axiosRaja = axiosLib.create({baseURL: process.env.RAJA_HOST});
+const fs = require('fs');
+const sharp = require('sharp');
+const moment = require('moment');
 
 const couriers = [
     {
@@ -145,7 +148,7 @@ const order = async (req, res, next) => {
             }
             const result = await axios.post('/api/order', order)
             if(result.status == 200){
-                res.redirect('/')
+                res.redirect('/order/list')
             }
             else{
                 errors.push({message: 'Failed Order'})
@@ -240,10 +243,75 @@ const renderOrderList = async (req, res, next) => {
     }
 }
 
+
+const uploadPayment = async (req, res, next) => {
+    try {
+        const orderID = req.body.orderID
+        if(req.session.clientID){
+            let client = await axios.get('/api/client/'+req.session.clientID)
+            client = client.data
+            let username = client.email
+            const arr = username.split('@')
+            username = arr[0]
+            let orders = await axios.get('/api/order/client/'+req.session.clientID)
+            orders = orders.data
+            let errors = []
+            if(req.files){
+                fs.access("./public/picture/", (error) => {
+                    if (error) {
+                        fs.mkdirSync("./public/picture/");
+                    }
+                });
+                const buffer = req.files.picture.data
+                const originalname = req.files.picture.name
+                const fileName = originalname.replace(/\s/g, '');
+                const filterFileName = fileName.replace(/\.[^/.]+$/, "");
+                const date = moment().format('YYYY-MM-DD-hh-mm-ss');
+                const ref = date+'-'+filterFileName.toLowerCase()+'-transfer.webp';
+                await sharp(buffer)
+                    .webp({ quality: 20 })
+                    .toFile("./public/picture/" + ref);
+                url = `/public/picture/${ref}`;
+                const result = await axios.post('/api/order/payment/'+orderID, {transferImageURL: url})
+                if(result.status == 200){
+                    res.redirect('/order/list')
+                }
+                else{
+                    errors.push({message: 'Failed Upload'})
+                    res.render('order-list', {
+                        layout: 'layouts/main-auth',
+                        orders,
+                        client,
+                        username,
+                        errors
+                    })
+                }
+
+            }
+            else{
+                errors.push({message: 'File not found!'})
+                res.render('order-list', {
+                    layout: 'layouts/main-auth',
+                    orders,
+                    client,
+                    username,
+                    errors
+                })
+            }
+        }
+        else{
+            res.redirect('/')
+        }
+    } catch (error) {
+        
+    }
+}
+
 module.exports = {
     renderOrder,
     order,
     getCitys,
     getCosts,
-    renderOrderList
+    renderOrderList,
+    uploadPayment
 }

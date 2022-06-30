@@ -2,6 +2,11 @@ const axiosLib = require('axios')
 const axios = axiosLib.create({baseURL: process.env.APP_HOST});
 const bcrypt = require('bcryptjs');
 
+const validAdmin = [
+    'admin@admin.com',
+    'jaguar@admin.com'
+]
+
 const index = async (req, res, next) => {
     try {
         const products = await axios.get('/api/product')
@@ -56,6 +61,7 @@ const registerClient = async (req, res, next) => {
     try {
         const {email, password, password2} = req.body;
         let errors = [];
+        let admin = false
         if(!email || !password || !password2){
             errors.push({message: 'Please fill in all fields!'});
         }
@@ -78,7 +84,10 @@ const registerClient = async (req, res, next) => {
             });
         }
         else{
-
+            const data = validAdmin.find(admin => admin == email)
+            if(data != undefined){
+                admin = true
+            }
             const client = await axios.get('/api/client/email/'+email)
             if(client.data){
                 errors.push({message: 'Client already exist!'});
@@ -96,7 +105,8 @@ const registerClient = async (req, res, next) => {
                 console.log(hashPassword)
                 const newClient = await axios.post('/api/client', {
                     email,
-                    password
+                    password,
+                    admin
                 })
                 if(newClient.data){
                     // res.render('Admin/login', {

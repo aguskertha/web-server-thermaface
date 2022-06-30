@@ -57,6 +57,9 @@ const orderSchema = new Schema({
     courierReceiptNumber: {
         type: String,
     },
+    approve: {
+        type: Boolean,
+    },
     createdAt: {
         type: String
     },

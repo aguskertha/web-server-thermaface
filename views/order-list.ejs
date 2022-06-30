@@ -1,6 +1,65 @@
+<!-- <style> 
+    .progresses{
+        display: flex;
+        align-items: center;
+    }
+
+    .line{
+        width: 120px;
+        height: 6px;
+        background: #63d19e;
+        margin-bottom: 40px;
+    }
+
+
+    .steps{
+        display: flex;
+        background-color: #63d19e;
+        color: #fff;
+        font-size: 14px;
+        width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+</style> -->
 <div class="container">
     <div class="forms-container"  align="center">
+        <!-- <div class="container d-flex justify-content-center align-items-center">
+    
+            <div class="progresses">
+            <div>
+                 <div class="steps">
+                    <span><i class="bi bi-check-circle"></i></span>
+                </div>
+                <p>Packed</p>
+            </div>
+            
+            <span class="line"></span>
+            
+            <div>
+                 <div class="steps">
+                    <span><i class="bi bi-check-circle"></i></span>
+                </div>
+                <p>Sent</p>
+            </div>
+        
+            <span class="line"></span>
+            
+            <div>
+                 <div class="steps">
+                    <span><i class="bi bi-check-circle"></i></span>
+                </div>
+                <p>Received</p>
+            </div>
+            
+                
+            </div>    
+                
+        </div> -->
         <h1 class="text-info mt-3"><%= username %> Order List</h1>
+        <% include ./partials/messages %> 
         <a href="/" class="float-start ms-5 h1" role="button"><i class="bi bi-arrow-left-circle-fill"></i></a>
         <div class="row">
             <div class="col-md-12" >
@@ -30,10 +89,21 @@
                             <td><%= order.city.city_name %></td>
                             <td><%= order.address %></td>
                             <td><%= order.postalCode %></td>
-                            <td><%= typeof order.transferImageURL != 'undefined' ? order.transferImageURL : '-' %></td>
                             <td><%= order.total %></td>
+                            <% if (order.transferImageURL != '') { %>
+                                <td><a href="<%= order.transferImageURL %>" target="_blank"><img src="<%= order.transferImageURL %>" alt="" height="100px"></a></td>
+                            <% } else{%>
+                                <td><a role="button" class="btn btn-info btn-lg w-auto" id="btn-delivery" data-bs-toggle="modal" data-bs-target="#modalTransfer"><i class="bi bi-info-square"></i></a></td>
+                            <% } %> 
+                            
                             <td><a role="button" class="btn btn-secondary btn-lg w-auto" id="btn-delivery" data-bs-toggle="modal" data-bs-target="#modalDelivery" onclick="showDelivery('<%= order._id %>')"><i class="bi bi-truck"></i></a></td>
                             <td><a role="button" class="btn btn-secondary btn-lg w-auto" id="btn-products" data-bs-toggle="modal" data-bs-target="#modalProducts" onclick="showProducts('<%= order._id %>')"><i class="bi bi-phone"></i></a></td>
+                            
+                            <% if (order.approve == false) { %>
+                                <td><a role="button" class="btn btn-warning btn-lg w-auto" id="btn-payment" data-bs-toggle="modal" data-bs-target="#modalPayment" onclick="uploadPayment('<%= order._id %>')"><i class="bi bi-upload"></i></a></td>
+                            <% } else { %>
+                                <td><a href="/order/detail" role="button" class="btn btn-info btn-lg w-auto" id="btn-payment" ><i class="bi bi-receipt"></i></a></td>
+                            <% } %> 
                         </tr>
                     <% } %>
                 </tbody>
@@ -113,8 +183,82 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modalPayment" role="dialog">
+    <div class="modal-dialog modal-lg bg-light rounded">
+        <div class="modal-content" align="center">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Upload Payment</h4>
+            </div>
+            
+            <!-- Modal Body -->
+                <form action="/order/payment" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="orderID" id="orderID" value="">
+                    <label for="formFileLg" class="form-label">Evidence of Transfer</label>
+                    <input id="input-b1" name='picture' type="file" class="file" data-browse-on-zone-click="true" required>
+                </form>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalTransfer" role="dialog">
+    <div class="modal-dialog modal-lg bg-light rounded">
+        <div class="modal-content" align="center">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Transfer</h4>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="row">
+                <div class="col-md-12 mt-4">
+                    <h4>BNI 0690694149</h4>
+                    <p>Sdr Putu Bagus Kertha Segara</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 mt-4">
+                    <h4>BCA 1520648025</h4>
+                    <p>Sdr Putu Bagus Kertha Segara</p>
+                </div>
+            </div>
+            
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.5.0/js/plugins/buffer.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.5.0/js/plugins/filetype.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.5.0/js/plugins/piexif.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.5.0/js/plugins/sortable.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.5.0/js/fileinput.min.js"></script>
 <script>
+
+    function uploadPayment(orderID){
+        var fieldOrderID = $('#orderID')
+        $(fieldOrderID).val(orderID)
+        // $(paymentWrapper).empty();
+        // $(paymentWrapper).append(
+        // `
+        // <form action="/order/payment/${orderID}" method="post" enctype="multipart/form-data">
+        //     <h4>BNI 0690694148</h4>
+        //     <p>Sdr Putu Bagus Kertha Segara</p>
+        //     <label for="formFileLg" class="form-label">Evidence of Transfer</label>
+        //     <input id="input-b1" name='picture' type="file" class="file" data-browse-on-zone-click="true" required>
+        // </form>
+        // `
+        // )
+    }
 
     function showProducts(orderID){
         getData('/api/order/product/'+orderID)
