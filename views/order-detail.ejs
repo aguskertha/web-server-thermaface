@@ -1,0 +1,203 @@
+<style> 
+    .progresses{
+        display: flex;
+        align-items: center;
+    }
+
+    .line{
+        width: 120px;
+        height: 6px;
+        background: #008cff;
+        margin-bottom: 40px;
+    }
+
+
+    .steps{
+        display: flex;
+        background-color: #008cff;
+        color: #fff;
+        font-size: 14px;
+        width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+</style>
+
+<div class="container">
+    <!-- <div class="forms-container"  align="center"> -->
+        <% 
+            let packed = 'bi bi-check-circle'
+            let sent = 'bi bi-check-circle'
+            let received = 'bi bi-check-circle'
+            let stepOne = 'bg-secondary'
+            let lineOne = 'bg-secondary'
+            let stepTwo = 'bg-secondary'
+            let lineTwo = 'bg-secondary'
+            let stepThree = 'bg-secondary'
+            if(order.paymentStatus == 2){
+                packed = 'bi bi-box'
+                sent = 'bi bi-truck'
+                received = 'bi bi-house'
+                stepOne = 'bg-primary'
+            }
+            else if(order.paymentStatus == 3){
+                sent = 'bi bi-truck'
+                received = 'bi bi-house'
+                stepOne = 'bg-primary'
+                stepTwo = 'bg-primary'
+                lineOne = 'bg-primary'
+            }
+            else if(order.paymentStatus == 4){
+                received = 'bi bi-house'
+                stepOne = 'bg-primary'
+                stepTwo = 'bg-primary'
+                lineOne = 'bg-primary'
+                stepThree = 'bg-primary'
+                lineTwo =   'bg-primary'
+            }
+            else if(order.paymentStatus == 5){
+                stepOne = 'bg-primary'
+                stepTwo = 'bg-primary'
+                lineOne = 'bg-primary'
+                stepThree = 'bg-primary'
+                lineTwo =   'bg-primary'
+            }
+
+        %> 
+        <a href="/order/list" class="float-start ms-5 mt-5 h1" role="button"><i class="bi bi-arrow-left-circle-fill"></i></a>
+        <% if ((order.paymentStatus == 3 || order.paymentStatus == 4)) { %>
+            <a class="float-end ms-5 mt-5 h1" role="button" onclick="doneOrder('<%= order._id %>')"><i class="bi bi-check-circle-fill" style="color: darkgreen;"></i></a>
+        <% } %>
+        <div class="container d-flex justify-content-center align-items-center mt-5" align="center">
+    
+            <div class="progresses">
+            <div>
+                 <div class="steps <%= stepOne %>">
+                    <span><i class="<%= packed %>"></i></span>
+                </div>
+                <p>Packed</p>
+            </div>
+            
+            <span class="line <%= lineOne %>"></span>
+            
+            <div>
+                 <div class="steps <%= stepTwo %>">
+                    <span><i class="<%= sent %>"></i></span>
+                </div>
+                <p>Sent</p>
+            </div>
+        
+            <span class="line <%= lineTwo %>"></span>
+            
+            <div>
+                 <div class="steps <%= stepThree %>">
+                    <span><i class="<%= received %>"></i></span>
+                </div>
+                <p>Received</p>
+            </div>
+            
+                
+            </div>    
+                
+        </div>
+        <br>
+        <h2 class="text-center">Products</h2>
+        <hr>
+        <% let subTotal = 0 %> 
+        <table class="table caption-top" cellspacing="0" width="100%">
+            <thead>
+                <tr class="text-center">
+                    <th scope="col">No</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Qty</th>
+                    <th scope="col">Sub Total</th>
+                </tr>
+            </thead>
+            <tbody id="products-wrapper"> 
+            <div id="">
+                <% for( let index = 0; index < order.carts.length; index++ ) { %>
+                <% const cart = order.carts[index] %> 
+                
+                    <tr style="white-space: nowrap;" class="align-middle text-center">
+                        <th scope="row"><%= index + 1 %></th>
+                        <td><%= cart.product.name %></td>
+                        <td><img src="<%= cart.product.imageURL %>" alt="" height="100px"> </td>
+                        <td><%= cart.product.price %></td>
+                        <td><%= cart.quantity %></td>
+                        <td><%= Number(cart.product.price * cart.quantity) %></td>
+                    </tr>
+                    <% subTotal += Number(cart.product.price * cart.quantity) %> 
+                <% } %>
+            </div>
+            </tbody>
+        </table>
+        <h5 class="float-end mx-3">Total Product Price : <%= subTotal %></h5><br>
+        <hr>
+        <br>
+        <h2 class="text-center">Delivery</h2>
+        <hr>
+        <% 
+        let courierReceiptNumber = order.courierReceiptNumber
+        if(order.courierReceiptNumber == ''){
+            courierReceiptNumber = '---'
+        }
+        %> 
+        <div class="row my-3" align="center">
+        <div class="col-md-12" >
+            <label for="">Receipt Number</label>
+            <h4><%= courierReceiptNumber %> </h4>
+        </div>
+        <div class="col-md-6" >
+            <h1>Courier</h1>
+            <label for="">Name</label>
+            <h4><%= order.courier.name %></h4>
+            <br>
+            <label for="">Code</label>
+            <h4><%= order.courier.code %></h4>
+        </div>
+        <div class="col-md-6" >
+            <h1>Service</h1>
+            <label for="">Name</label>
+            <h4><%= order.service.name %></h4>
+            <br>
+            <label for="">Price</label>
+            <h4><%= order.service.price %></h4>
+        </div>
+        </div>
+        <hr>
+        <br>
+        <h2 class="text-center">Payment</h2>
+        <hr>
+        <div class="mb-5" align="center">
+            <a href="<%= order.transferImageURL %>" target="_blank"><img src="<%= order.transferImageURL %>" alt="" height="200px"></a>
+            <h5 class="m-3">Total Payment : <%= order.total %></h5><br>
+        </div>
+    <!-- </div> -->
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    async function getData(url = '') {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      })
+      return response.json(); 
+    }
+
+    function doneOrder(orderID){
+        let confirmation = confirm('Are you sure to Finish this delivery?')
+        if(confirmation){
+            getData('/api/order/status/'+orderID+'?status='+5)
+            .then(data => {
+                alert(data.message)
+                location.reload();
+            })
+        }
+    }
+</script>

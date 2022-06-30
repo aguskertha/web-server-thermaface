@@ -41,6 +41,10 @@ const status = [
         id: 4,
         description: 'Received'
     },
+    {
+        id: 5,
+        description: 'Done'
+    },
 
 ]
 
@@ -379,6 +383,34 @@ const updateOrderReceipt = async (req, res, next) => {
     }
 }
 
+const renderOrderDetail = async (req, res, next) => {
+    try {
+        const orderID = req.params.orderID
+        if(req.session.clientID){
+            let client = await axios.get('/api/client/'+req.session.clientID)
+            client = client.data
+            let order = await axios.get('/api/order/detail/'+orderID)
+        
+            order = order.data
+            res.render('order-detail', {
+                layout: 'layouts/main-auth',
+                order,
+                client,
+                status
+            })
+        }
+        else{
+            res.redirect('/')
+        }
+    } catch (error) {
+        res.render('error', {
+            layout: 'layouts/main-auth',
+            message: error,
+            status: 400
+        });
+    }
+}
+
 module.exports = {
     renderOrder,
     order,
@@ -386,5 +418,6 @@ module.exports = {
     getCosts,
     renderOrderList,
     uploadPayment,
-    updateOrderReceipt
+    updateOrderReceipt,
+    renderOrderDetail
 }

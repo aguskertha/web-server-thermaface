@@ -185,6 +185,42 @@ const updateOrderReceipt = async (req, res, next) => {
     }
 }
 
+const getOrderByID = async (req, res, next) => {
+    try {
+        const orderID = req.params.orderID
+        const order = await Order.findOne({_id: ObjectID(orderID)})
+        if(!order){
+            throw 'Order not found!'
+        }
+        res.json(order)
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
+const updateOrderPaymentStatus = async (req, res, next) => {
+    try {
+        const orderID = req.params.orderID
+        const paymentStatus = req.query.status
+        const order = await Order.findOne({_id: ObjectID(orderID)})
+        if(!order){
+            throw 'Order not found!'
+        }
+        await Order.updateOne(
+            { _id: ObjectID(orderID) },
+            {
+                $set: {
+                    paymentStatus: paymentStatus,
+                }
+            }
+        )
+
+        res.json({message: 'Status Order successfully updated!'})
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
 module.exports = {
     createOrder,
     getOrders,
@@ -193,5 +229,7 @@ module.exports = {
     getProductsOrderByID,
     uploadPaymentOrderByID,
     approveOrder,
-    updateOrderReceipt
+    updateOrderReceipt,
+    getOrderByID,
+    updateOrderPaymentStatus
 }
