@@ -3,15 +3,31 @@ const Schema = mongoose.Schema;
 const moment = require('moment');
 
 const orderSchema = new Schema({
-    product: {
+    province: {
         type: mongoose.Schema.Types.Mixed,
         required: true
     },
-    quantity: {
-        type: Number,
+    city: {
+        type: mongoose.Schema.Types.Mixed,
+        required: true
+    },
+    courier: {
+        type: mongoose.Schema.Types.Mixed,
+        required: true
+    },
+    service: {
+        type: mongoose.Schema.Types.Mixed,
         required: true
     },
     address: {
+        type: String,
+        required: true
+    },
+    postalCode: {
+        type: String,
+        required: true
+    },
+    name: {
         type: String,
         required: true
     },
@@ -19,8 +35,16 @@ const orderSchema = new Schema({
         type: String,
         required: true
     },
-    postalCode: {
+    carts: {
+        type: mongoose.Schema.Types.Mixed,
+        required: true
+    },
+    total: {
         type: Number,
+        required: true
+    },
+    clientID: {
+        type: String,
         required: true
     },
     paymentStatus: {
@@ -30,9 +54,8 @@ const orderSchema = new Schema({
     transferImageURL: {
         type: String,
     },
-    clientID: {
+    courierReceiptNumber: {
         type: String,
-        required: true
     },
     createdAt: {
         type: String

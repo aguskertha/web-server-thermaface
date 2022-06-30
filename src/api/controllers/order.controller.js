@@ -1,6 +1,7 @@
 const Order = require('../models/order.model')
 const Product = require('../models/product.model')
 const Client = require('./../models/client.model')
+const Cart = require('./../models/cart.model')
 const ObjectID = require('mongodb').ObjectId;
 const fs = require('fs');
 const sharp = require('sharp');
@@ -9,7 +10,7 @@ const bcrypt = require('bcryptjs');
 
 const createOrder = async (req, res, next) => {
     try {
-        let {productID, quantity, address, phone, postalCode, clientID } = req.body
+        let {province,city,courier,service,address,postalCode,name,phone,carts,total,clientID} = req.body
         let paymentStatus = 0
         
         const client = await Client.findOne({_id: ObjectID(clientID)})
@@ -17,38 +18,27 @@ const createOrder = async (req, res, next) => {
             throw 'Client not found!'
         }
 
-        const product = await Product.findOne({_id: ObjectID(productID)})
-        if(!product){
-            throw 'Product not found!'
+        const order = {
+            province,
+                city,
+                courier,
+                service,
+                address,
+                postalCode,
+                name,
+                phone,
+                carts,
+                total,
+                clientID,
+                paymentStatus
         }
-        if(req.files){
-            fs.access("./public/picture/", (error) => {
-                if (error) {
-                    fs.mkdirSync("./public/picture/");
-                }
-            });
-            const buffer = req.files.picture.data
-            const originalname = req.files.picture.name
-            const fileName = originalname.replace(/\s/g, '');
-            const filterFileName = fileName.replace(/\.[^/.]+$/, "");
-            const date = moment().format('YYYY-MM-DD-hh-mm-ss');
-            const ref = date+'-'+filterFileName.toLowerCase()+'-transfer.webp';
-            await sharp(buffer)
-                .webp({ quality: 20 })
-                .toFile("./public/picture/" + ref);
-            url = `/public/picture/${ref}`;
-            paymentStatus = 1
-            const newOrder = new Order({product, quantity, address, phone, postalCode, clientID, paymentStatus, transferImageURL: url })
-            await newOrder.save()
 
-            res.json({message: 'Order successfully created!'})
-        }
-        else{
-            const newOrder = new Order({product, quantity, address, phone, postalCode, clientID, paymentStatus})
-            await newOrder.save()
+        const newOrder = new Order(order)
+        newOrder.save()
 
-            res.json({message: 'Order successfully created!'})
-        }
+        await Cart.deleteMany({clientID: clientID})
+
+        res.json({message: 'Order Successfully created!'})
 
     } catch (error) {
         res.status(400).json({message: error.toString()})
