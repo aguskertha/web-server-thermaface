@@ -41,6 +41,9 @@ const renderOrder = async (req, res, next) => {
         else{
             res.redirect('/')
         }
+        if(carts.length == 0){
+            res.redirect('/')
+        }
         res.render('order', {
             layout: 'layouts/main-auth',
             client: client,
@@ -205,9 +208,42 @@ const getCosts = async (req, res, next) => {
     }
 }
 
+const renderOrderList = async (req, res, next) => {
+    try {
+
+        if(req.session.clientID){
+            let client = await axios.get('/api/client/'+req.session.clientID)
+            client = client.data
+            let username = client.email
+            const arr = username.split('@')
+            username = arr[0]
+            let orders = await axios.get('/api/order/client/'+req.session.clientID)
+            orders = orders.data
+            res.render('order-list', {
+                layout: 'layouts/main-auth',
+                orders,
+                client,
+                username
+            })
+        }
+        else{
+            res.redirect('/')
+        }
+
+        
+    } catch (error) {
+        res.render('error', {
+            layout: 'layouts/main-auth',
+            message: error,
+            status: 400
+        });
+    }
+}
+
 module.exports = {
     renderOrder,
     order,
     getCitys,
-    getCosts
+    getCosts,
+    renderOrderList
 }

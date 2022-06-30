@@ -1,0 +1,194 @@
+<div class="container">
+    <div class="forms-container"  align="center">
+        <h1 class="text-info mt-3"><%= username %> Order List</h1>
+        <a href="/" class="float-start ms-5 h1" role="button"><i class="bi bi-arrow-left-circle-fill"></i></a>
+        <div class="row">
+            <div class="col-md-12" >
+              <table class="table caption-top" cellspacing="0" width="100%">
+                <thead>
+                    <tr class="text-center">
+                        <th scope="col">No</th>
+                        <th scope="col">Recipient Name</th>
+                        <th scope="col">Province</th>
+                        <th scope="col">City</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Postal Code</th>
+                        <th scope="col">Transfer</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Delivery</th>
+                        <th scope="col">Products</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="">
+                    <% for( let index = 0; index < orders.length; index++ ) { %>
+                        <% const order = orders[index] %> 
+                        <tr style="white-space: nowrap;" class="align-middle text-center">
+                            <th scope="row"><%= index+1 %></th>
+                            <td><%= order.name %></td>
+                            <td><%= order.province.province %></td>
+                            <td><%= order.city.city_name %></td>
+                            <td><%= order.address %></td>
+                            <td><%= order.postalCode %></td>
+                            <td><%= typeof order.transferImageURL != 'undefined' ? order.transferImageURL : '-' %></td>
+                            <td><%= order.total %></td>
+                            <td><a role="button" class="btn btn-secondary btn-lg w-auto" id="btn-delivery" data-bs-toggle="modal" data-bs-target="#modalDelivery" onclick="showDelivery('<%= order._id %>')"><i class="bi bi-truck"></i></a></td>
+                            <td><a role="button" class="btn btn-secondary btn-lg w-auto" id="btn-products" data-bs-toggle="modal" data-bs-target="#modalProducts" onclick="showProducts('<%= order._id %>')"><i class="bi bi-phone"></i></a></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+              </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalDelivery" role="dialog">
+    <div class="modal-dialog modal-lg bg-light rounded">
+        <div class="modal-content" align="center">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Delivery</h4>
+            </div>
+            
+            <!-- Modal Body -->
+            <div id="delivery-wrapper">
+            <div class="row">
+                <div class="col-md-5" >
+                    <h1>Courier</h1>
+                    <label for="">Name</label>
+                    <h4>JNEAHH</h4>
+                    <br>
+                    <label for="">Name</label>
+                    <h4>JNEAHH</h4>
+                </div>
+                <div class="col-md-6" >
+                    <h1>Service</h1>
+                    <label for="">Name</label>
+                    <h4>JNEAHH</h4>
+                    <br>
+                    <label for="">Name</label>
+                    <h4>JNEAHH</h4>
+                </div>
+            </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <!-- <div class="modal-footer">
+            </div> -->
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalProducts" role="dialog">
+    <div class="modal-dialog modal-lg bg-light rounded">
+        <div class="modal-content" align="center">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Products</h4>
+            </div>
+            
+            <!-- Modal Body -->
+            <table class="table caption-top" cellspacing="0" width="100%">
+                <thead>
+                    <tr class="text-center">
+                        <th scope="col">No</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Qty</th>
+                        <th scope="col">Sub Total</th>
+                    </tr>
+                </thead>
+                <tbody id="products-wrapper"> 
+                <div id="">
+                    
+                </div>
+                </tbody>
+                
+            </table>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+
+    function showProducts(orderID){
+        getData('/api/order/product/'+orderID)
+        .then(data => {
+            var productsWrapper = $('#products-wrapper')
+            $(productsWrapper).empty();
+            let subTotal = 0
+            for (let index = 0; index < data.length; index++) {
+                const cart = data[index];
+                
+                $(productsWrapper).append(
+                `
+                <tr style="white-space: nowrap;" class="align-middle text-center">
+                    <th scope="row">${index+1}</th>
+                    <td>${cart.product.name }</td>
+                    <td><img src="${cart.product.imageURL}" alt="" height="100px"> </td>
+                    <td>${cart.product.price} </td>
+                    <td>${cart.quantity}</td>
+                    <td>${Number(cart.product.price * cart.quantity)}</td>
+                </tr>
+                `
+                )
+                subTotal += Number(cart.product.price * cart.quantity)
+            }
+
+            var footer = $('.modal-footer')
+            $(footer).empty();
+            $(footer).append(
+            `
+            <h5 class="float-end mx-3">Total Product Price : Rp${subTotal}</h5><br>
+            `
+            )
+        })
+    }
+
+    function showDelivery(orderID){
+        getData('/api/order/delivery/'+orderID)
+        .then(data => {
+            var deliveryWrapper = $('#delivery-wrapper')
+            $(deliveryWrapper).empty();
+            $(deliveryWrapper).append(
+                `
+                <div class="row">
+                <div class="col-md-5" >
+                    <h1>Courier</h1>
+                    <label for="">Name</label>
+                    <h4>${data.courier.name}</h4>
+                    <br>
+                    <label for="">Code</label>
+                    <h4>${data.courier.code}</h4>
+                </div>
+                <div class="col-md-6" >
+                    <h1>Service</h1>
+                    <label for="">Name</label>
+                    <h4>${data.service.name}</h4>
+                    <br>
+                    <label for="">Price</label>
+                    <h4>${data.service.price}</h4>
+                </div>
+                </div>
+                `
+            )
+        })
+    }
+
+    async function getData(url = '') {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      })
+      return response.json(); 
+    }
+
+    
+</script>

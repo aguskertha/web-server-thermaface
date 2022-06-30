@@ -68,8 +68,49 @@ const getOrdersByClientID = async (req, res, next) => {
     }
 }
 
+const getDeliveryOrderByID = async (req, res, next) => {
+    try {
+        const orderID = req.params.orderID
+        const order = await Order.findOne({_id: ObjectID(orderID)})
+        if(!order){
+            throw 'Order nor found!'
+        }
+        let courierReceiptNumber = ''
+        if(order.courierReceiptNumber){
+            courierReceiptNumber = order.courierReceiptNumber
+        }
+        const delivery = {
+            courier: order.courier,
+            service: order.service,
+            courierReceiptNumber
+        }
+
+        res.json(delivery)
+
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
+const getProductsOrderByID = async (req, res, next) => {
+    try {
+        const orderID = req.params.orderID
+        const order = await Order.findOne({_id: ObjectID(orderID)})
+        if(!order){
+            throw 'Order nor found!'
+        }
+
+        const products = order.carts
+        res.json(products)
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
 module.exports = {
     createOrder,
     getOrders,
-    getOrdersByClientID
+    getOrdersByClientID,
+    getDeliveryOrderByID,
+    getProductsOrderByID
 }
