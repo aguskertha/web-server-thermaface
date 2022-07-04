@@ -145,6 +145,27 @@ const approveOrder = async (req, res, next) => {
         if(!order){
             throw 'Order not found!'
         }
+
+        let promises = []
+
+        const updateProductStock = async (cart) => {
+            const productID = cart.product._id
+            await Product.updateOne(
+                {_id: ObjectID(productID)},
+                {
+                    $set: {
+                        stock: Number(cart.product.stock) - Number(cart.quantity)
+                    }
+                }
+            )
+        }
+
+        order.carts.forEach(cart => {
+            promises.push(updateProductStock(cart))
+        });
+
+        await Promise.all(promises)
+
         await Order.updateOne(
             { _id: ObjectID(orderID) },
             {

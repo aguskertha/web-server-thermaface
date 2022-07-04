@@ -887,21 +887,29 @@
 
     function addToCart(productID){
       const clientID = $('#clientID').val()
-      var result = confirm('Are you sure to add to Cart?');
+      console.log(clientID)
+      if(clientID == undefined){
+        alert('Login first!')
+        window.location.href = '/auth/login'
+      }
+      else{
+        var result = confirm('Are you sure to add to Cart?');
       if(result){
         postData('/api/cart', {
           clientID: clientID,
           productID: productID,
           quantity: 1
         })
-        .then(data => {
-          getData('/api/cart/client/'+clientID)
           .then(data => {
-            updateCountCart(data)
-            updateListCart(data)
-          })
-        });
+            getData('/api/cart/client/'+clientID)
+            .then(data => {
+              updateCountCart(data)
+              updateListCart(data)
+            })
+          });
+        }
       }
+      
     }
 
     function updateListCart(data){
