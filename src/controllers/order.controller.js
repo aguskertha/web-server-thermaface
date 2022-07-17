@@ -356,11 +356,40 @@ const updateOrderReceipt = async (req, res, next) => {
                 orders = await axios.get('/api/order')
             }
             orders = orders.data
+            
+            if(req.files){
+                fs.access("./public/picture/", (error) => {
+                    if (error) {
+                        fs.mkdirSync("./public/picture/");
+                    }
+                });
+                const buffer = req.files.picture.data
+                const originalname = req.files.picture.name
+                const fileName = originalname.replace(/\s/g, '');
+                const filterFileName = fileName.replace(/\.[^/.]+$/, "");
+                const date = moment().format('YYYY-MM-DD-hh-mm-ss');
+                const ref = date+'-'+filterFileName.toLowerCase()+'-courier.webp';
+                await sharp(buffer)
+                    .webp({ quality: 20 })
+                    .toFile("./public/picture/" + ref);
+                url = `/public/picture/${ref}`;
 
-            const result = await axios.post('/api/order/receipt/'+orderID, {courierReceiptNumber: receipt})
-            if(result.status == 200){
-                req.flash('success_msg', result.data.message);
-                res.redirect('/order/list')
+                const result = await axios.post('/api/order/receipt/'+orderID, {courierReceiptNumber: receipt, courierReceiptImageURL: url})
+                if(result.status == 200){
+                    req.flash('success_msg', result.data.message);
+                    res.redirect('/order/list')
+                }
+                else{
+                    errors.push({message: 'Failed Update!'})
+                        res.render('order-list', {
+                        layout: 'layouts/main-auth',
+                        orders,
+                        client,
+                        username,
+                        status,
+                        errors
+                    })
+                }
             }
             else{
                 errors.push({message: 'Failed Update!'})
@@ -373,6 +402,7 @@ const updateOrderReceipt = async (req, res, next) => {
                     errors
                 })
             }
+            
             
         }
         else{

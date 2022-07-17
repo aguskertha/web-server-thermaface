@@ -54,6 +54,9 @@ const orderSchema = new Schema({
     transferImageURL: {
         type: String,
     },
+    courierReceiptImageURL: {
+        type: String,
+    },
     courierReceiptNumber: {
         type: String,
     },

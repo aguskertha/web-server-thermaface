@@ -13,6 +13,7 @@ const createOrder = async (req, res, next) => {
         let {province,city,courier,service,address,postalCode,name,phone,carts,total,clientID} = req.body
         let paymentStatus = 0
         let transferImageURL = ''
+        let courierReceiptImageURL = ''
         let courierReceiptNumber = ''
         let approve = false
         const client = await Client.findOne({_id: ObjectID(clientID)})
@@ -35,6 +36,7 @@ const createOrder = async (req, res, next) => {
                 paymentStatus,
                 approve,
                 transferImageURL,
+                courierReceiptImageURL,
                 courierReceiptNumber
         }
 
@@ -84,10 +86,16 @@ const getDeliveryOrderByID = async (req, res, next) => {
         if(order.courierReceiptNumber){
             courierReceiptNumber = order.courierReceiptNumber
         }
+        let courierReceiptImageURL = ''
+        if(order.courierReceiptImageURL){
+            courierReceiptImageURL = order.courierReceiptImageURL
+        }
+
         const delivery = {
             courier: order.courier,
             service: order.service,
-            courierReceiptNumber
+            courierReceiptNumber,
+            courierReceiptImageURL
         }
 
         res.json(delivery)
@@ -185,7 +193,7 @@ const approveOrder = async (req, res, next) => {
 const updateOrderReceipt = async (req, res, next) => {
     try {
         const orderID = req.params.orderID
-        const courierReceiptNumber = req.body.courierReceiptNumber
+        const {courierReceiptNumber, courierReceiptImageURL} = req.body
         const order = await Order.findOne({_id: ObjectID(orderID)})
         if(!order){
             throw 'Order not found!'
@@ -195,7 +203,8 @@ const updateOrderReceipt = async (req, res, next) => {
             {
                 $set: {
                     paymentStatus: 3,
-                    courierReceiptNumber
+                    courierReceiptNumber,
+                    courierReceiptImageURL
                 }
             }
         )

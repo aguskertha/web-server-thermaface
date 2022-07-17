@@ -100,6 +100,9 @@
                     <label for="">Name</label>
                     <h4>JNEAHH</h4>
                 </div>
+                <div class="col-md-12">
+                    <img src="" alt="">
+                </div>
             </div>
             </div>
             
@@ -167,6 +170,7 @@
     </div>
 </div>
 
+
 <div class="modal fade" id="modalReceipt" role="dialog">
     <div class="modal-dialog modal-lg bg-light rounded">
         <div class="modal-content" align="center">
@@ -176,13 +180,14 @@
             </div>
             
             <!-- Modal Body -->
-                <form action="/order/receipt" method="post">
+                <form action="/order/receipt" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="orderID" id="orderID2" value="">
                     <div class="input-field">
                         <i class="fas fa-lock"></i>
                         <input type="text" name="receipt" placeholder="Receipt Number" required />
                     </div>
-                    <input type="submit" class="btn btn-primary">
+                    <input id="input-b1" name='picture' type="file" class="file" data-browse-on-zone-click="true" required>
+                    <!-- <input type="submit" class="btn btn-primary"> -->
                 </form>
             
             <!-- Modal Footer -->
@@ -328,6 +333,10 @@
                     <br>
                     <label for="">Price</label>
                     <h4>${data.service.price}</h4>
+                </div>
+                <br>
+                <div class="col-md-12 mt-3">
+                    <img src="${data.courierReceiptImageURL}" width="70%" alt="">
                 </div>
                 </div>
                 `
