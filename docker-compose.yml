@@ -9,10 +9,10 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - "5005:5005"
+      - "80:80"
     environment:
-      - PORT=5005
-      - APP_HOST=http://localhost:5005
+      - PORT=80
+      - APP_HOST=http://localhost:80
       - DB_SERVICE=thermaface-mongo
       - DB_PORT=27017
       - DB_NAME=thermafaceDB

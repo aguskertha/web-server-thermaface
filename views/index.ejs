@@ -432,11 +432,11 @@
         <div class="row">
           <% for( let index = 0; index < products.length; index++ ) { %>
           <% const product = products[index] %> 
-            <div class="col-lg-6 col-md-6">
+            <div class="col-lg-6 col-md-6 mb-4">
               <div class="box" data-aos="fade-up" data-aos-delay="100">
                 <h3><%= product.name %></h3>
                 <h4><sup>Rp</sup><%= product.price %> <span></span></h4>
-                <img src="<%= product.imageURL %>" height="5%" alt="">
+                <img src="<%= product.imageURL %>" height="200px" alt="">
                 <br>
                 <br>
                 <p><%= product.description %></p>

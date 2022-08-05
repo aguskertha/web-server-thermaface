@@ -106,6 +106,9 @@
           <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
             <li><a class="dropdown-item mb-3" href="/auth/reset-password">Reset password</a></li>
             <li><a class="dropdown-item mb-3" href="/order/list">Order List</a></li>
+            <% if (admin) { %>
+              <li><a class="dropdown-item mb-3" href="/product/">Product</a></li>
+            <% } %> 
               <!-- <li><a class="dropdown-item" href="#">Settings</a></li>
               <li><a class="dropdown-item" href="#">Profile</a></li> -->
               <li>

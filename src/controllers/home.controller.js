@@ -14,6 +14,7 @@ const index = async (req, res, next) => {
         let client = null
         let carts = []
         let cartCount = 0
+        let admin = false
         if(req.session.clientID){
             client = await axios.get('/api/client/'+clientID)
             client = client.data
@@ -23,12 +24,16 @@ const index = async (req, res, next) => {
                 cartCount += cart.quantity
             });
         }
+        if(req.session.admin){
+            admin = true
+        }
         res.render('index', {
             layout: 'layouts/main-home',
             products: products.data,
             client: client,
             carts: carts,
-            cartCount
+            cartCount,
+            admin
         })
     } catch (error) {
         
