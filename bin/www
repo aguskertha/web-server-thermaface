@@ -9,6 +9,7 @@ var debug = require('debug')('web-server-thermaface:server');
 var http = require('http');
 const https = require('https');
 const fs = require('fs')
+var path = require('path');
 require('./../src/utils/db')
 /**
  * Get port from environment and store in Express.
@@ -24,9 +25,9 @@ app.set('port', port);
 var server = http.createServer(app);
 
 if(process.env.NODE_ENV === "production"){
-  const privateKey = fs.readFileSync('/etc/letsencrypt/live/thermaface.id/privkey.pem', 'utf-8')
-  const certificate = fs.readFileSync('/etc/letsencrypt/live/thermaface.id/cert.pem', 'utf-8')
-  const ca = fs.readFileSync('/etc/letsencrypt/live/thermaface.id/chain.pem', 'utf-8')
+  const privateKey = fs.readFileSync(path.join(__dirname, '/etc/letsencrypt/live/thermaface.id/privkey.pem'), 'utf8')
+  const certificate = fs.readFileSync(path.join(__dirname, '/etc/letsencrypt/live/thermaface.id/cert.pem'), 'utf8')
+  const ca = fs.readFileSync(path.join(__dirname, '/etc/letsencrypt/live/thermaface.id/chain.pem'), 'utf8')
   const options = {
     key: privateKey,
     cert: certificate,
