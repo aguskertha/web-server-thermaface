@@ -18,7 +18,7 @@ services:
       - DB_NAME=thermafaceDB
       - RAJA_KEY=1bd9484aeced5db67bbbcec7965097ca
       - RAJA_HOST=https://api.rajaongkir.com/starter
-      - NODE_ENV=production
+      - NODE_ENV=dev
   thermaface-mongo:
     image: mongo:latest # use the latest image.
     container_name: thermaface-mongo
