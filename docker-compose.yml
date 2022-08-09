@@ -29,4 +29,6 @@ services:
       - 27017:27017
     volumes: # optional to preserve database after container is deleted.
       - ./db/data:/data/db
+volumes:
+  thermaface-mongo: {}
   
