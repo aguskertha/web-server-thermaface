@@ -43,6 +43,10 @@ const status = [
     },
     {
         id: 5,
+        description: 'Review'
+    },
+    {
+        id: 6,
         description: 'Done'
     },
 
@@ -441,6 +445,31 @@ const renderOrderDetail = async (req, res, next) => {
     }
 }
 
+const sendTestimonial = async (req, res, next) => {
+    try {
+        const {orderID, message, rate} = req.body
+        if(req.session.clientID){
+            let result = await axios.post('/api/testimonial/', {orderID, message, rate})
+            if(result.status == 200){
+                res.redirect('/order/list')
+            }
+            else{
+                res.redirect('/')
+            }
+        }
+        else{
+            res.redirect('/')
+        }
+    } catch (error) {
+        res.render('error', {
+            layout: 'layouts/main-auth',
+            message: error,
+            status: 400
+        });
+        
+    }
+}
+
 module.exports = {
     renderOrder,
     order,
@@ -449,5 +478,6 @@ module.exports = {
     renderOrderList,
     uploadPayment,
     updateOrderReceipt,
-    renderOrderDetail
+    renderOrderDetail,
+    sendTestimonial
 }

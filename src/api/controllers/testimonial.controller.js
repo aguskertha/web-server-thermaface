@@ -7,12 +7,21 @@ const createTestimonial = async (req, res, next) => {
         const {orderID, message, rate} = req.body;
         const order = await Order.findOne({_id: ObjectID(orderID)})
         if(!order) throw "Order not found!"
+
         const newTestimonial = new Testimonial({
             orderID,
             message,
             rate
         })
         await newTestimonial.save()
+        await Order.updateOne(
+            { _id: ObjectID(orderID) },
+            {
+                $set: {
+                    paymentStatus: 6
+                }
+            }
+        )
         res.json({message: 'Testimonial successfully created!'})
     } catch (error) {
         res.status(400).json({message: error.toString()})
