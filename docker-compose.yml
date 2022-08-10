@@ -22,14 +22,12 @@ services:
   thermaface-mongo:
     image: mongo:latest # use the latest image.
     container_name: thermaface-mongo
-    restart: always
     environment: # set required env variables to access mongo
       MONGO_INITDB_DATABASE: thermafaceDB
     ports:
       - 27017:27017
     volumes: # optional to preserve database after container is deleted.
       - ./db/data:/data/db
-      - mongo-volume:/data/db
-volumes:
-  mongo-volume: {}
+# volumes:
+#   mongo-volume: {}
   
