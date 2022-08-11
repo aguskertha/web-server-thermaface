@@ -29,5 +29,5 @@ services:
     volumes: # optional to preserve database after container is deleted.
       - mongo-volume:/data/db
 volumes:
-  mongo-volume;
+  mongo-volume:
   
