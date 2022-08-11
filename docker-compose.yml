@@ -27,7 +27,7 @@ services:
     ports:
       - 27017:27017
     volumes: # optional to preserve database after container is deleted.
-      - /root/db/data:/data/db
-# volumes:
-#   mongo-volume: {}
+      - mongo-volume:/data/db
+volumes:
+  mongo-volume;
   
