@@ -8,9 +8,11 @@
    
         <!-- DataTales Example -->
         <div class="card shadow mb-4 mt-4" style="padding: 20px;">
-          
+            <% include ./../partials/messages %> 
+            <!-- <a href="/admin/device/assign" class="text-start h4 text-decoration-none" role="button"><i class="bi bi-plus-square-fill"></i> Assign Device</a> -->
+            <a role="button" class="text-start h4 text-decoration-none" id="btn-testi" data-bs-toggle="modal" data-bs-target="#modalDevice"><i class="bi bi-plus-square-fill"></i> Assign Device</a>
                 <div class="table-responsive">
-                    <span>Total Device : 1</span>
+                    <span>Total Device : <%= devices.length %> </span>
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
@@ -21,13 +23,14 @@
                             </tr>
                         </thead>
                         <tfoot>
-
-                            <tr>
-                                <td><%= device.deviceID %></td>
-                                <td><%= device.deviceCode %></td>
-                                <td><%= device.name %></td>
-                          
-                            </tr>
+                            <% devices.forEach(device => { %>
+                                <tr>
+                                    <td><%= device.deviceID %></td>
+                                    <td><%= device.deviceCode %></td>
+                                    <td><%= device.name %></td>
+                              
+                                </tr>
+                            <% }) %>
                         </tbody>
                     </table>
                 </div>
@@ -35,6 +38,38 @@
         </div>
 
     <!-- /.container-fluid -->
+    <div class="modal fade" id="modalDevice" role="dialog">
+        <div class="modal-dialog modal-lg bg-light rounded">
+            <div class="modal-content" align="center">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Assign Device</h4>
+                </div>
+                
+                <!-- Modal Body -->
+                    <form action="/admin/device/assign" method="post">
+                        <div class="container">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" name="deviceID" placeholder="Device ID" aria-label="Device ID" aria-describedby="basic-addon1" required>
+                              </div>
+                        </div>
+                        <input type="submit" class="btn btn-primary">
+                    </form>
+                
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
+    <script>
+        function sendTesti(orderID){
+            var fieldOrderID = $('#orderID3')
+            $(fieldOrderID).val(orderID)
+        }
+    </script>
 
 
 

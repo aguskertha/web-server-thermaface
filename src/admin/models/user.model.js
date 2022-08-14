@@ -28,14 +28,6 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    deviceID: {
-        type: String,
-        required: true
-    },
-    deviceCode: {
-        type: String,
-        required: true
-    },
     pictureURL: {
         type: String,
     },

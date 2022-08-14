@@ -12,6 +12,14 @@ const deviceSchema = new Schema({
         type: String,
         required: true
     },
+    userID: {
+        type: Schema.Types.ObjectId,
+        ref: 'users'
+    },
+    status: {
+        type: Boolean,
+        required: true
+    },
     name: {
         type: String,
     },

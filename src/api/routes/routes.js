@@ -6,6 +6,7 @@ const productRouter = require('./product.route')
 const clientRouter = require('./client.route')
 const cartRouter = require('./cart.route')
 const testimonialRouter = require('./testimonial.route')
+const logRouter = require('./log.route')
 
 router.use('/visitor', visitorRouter);
 router.use('/device', deviceRouter);
@@ -14,5 +15,6 @@ router.use('/product', productRouter);
 router.use('/client', clientRouter);
 router.use('/cart', cartRouter);
 router.use('/testimonial', testimonialRouter);
+router.use('/log', logRouter);
 
 module.exports = router;

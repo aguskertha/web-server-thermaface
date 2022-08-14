@@ -102,7 +102,6 @@ const register = async (req, res, next) => {
         }
         else{
             const user = await User.findOne({email: email});
-            console.log(user)
             if(user){
                 errors.push({message: 'User already exist!'});
                 res.render('Admin/register', {
@@ -120,7 +119,7 @@ const register = async (req, res, next) => {
                 });
             }
             else{
-                const newUser = new User({name, email, password, phone, company, address, deviceID, deviceCode, pictureURL: '/public/img/profile.png'});
+                const newUser = new User({name, email, password, phone, company, address, pictureURL: '/public/img/profile.png'});
                 
                 bcrypt.hash(password, 10, async (err, hashedPassword) => {
                     if(err){
@@ -141,7 +140,9 @@ const register = async (req, res, next) => {
                     }
                     else{
                         newUser.password = hashedPassword;
-                        await newUser.save();
+                        const user = await newUser.save();
+                        // await axios.post('/api/device/status', {deviceID, status:true})
+                        await axios.post('/api/device/status', {userID: user._id, deviceID, status:true})
                         req.flash('success_msg', 'You are now registered and can login!');
                         res.redirect('/auth/login');
                     }

@@ -49,7 +49,7 @@ const getTestimonials = async (req, res, next) => {
 const getTestimonialByID = async (req, res, next) => {
     try {
         const testimonialID = req.params.testimonialID
-        const testimonial = await Testimonial.find({_id: Object(testimonialID)})
+        const testimonial = await Testimonial.find({_id: ObjectID(testimonialID)})
         if(!testimonial) throw "Testimonial not found!"
         res.json(testimonial)
     } catch (error) {

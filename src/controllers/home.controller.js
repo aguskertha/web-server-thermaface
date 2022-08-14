@@ -9,8 +9,20 @@ const validAdmin = [
 
 const index = async (req, res, next) => {
     try {
+        try {
+            let log = await axios.get('/api/log/localhost')
+            
+            let counter = Number(log.data.counter)+1;
+            const result = await axios.post('/api/log/update', {name:'localhost', counter})
+        } catch (error) {
+            await axios.post('/api/log/', {name:'localhost'})
+        }
+        
         const products = await axios.get('/api/product')
         const clientID = req.session.clientID
+        let logs = await axios.get('/api/log/')
+        let orders = await axios.get('/api/order')
+        let testimonials = await axios.get('/api/testimonial')
         let client = null
         let carts = []
         let cartCount = 0
@@ -33,7 +45,11 @@ const index = async (req, res, next) => {
             client: client,
             carts: carts,
             cartCount,
-            admin
+            admin,
+            logCount: logs.data[0].counter,
+            orderCount: orders.data.length,
+            productCount: products.data.length,
+            testiCount: testimonials.data.length
         })
     } catch (error) {
         
