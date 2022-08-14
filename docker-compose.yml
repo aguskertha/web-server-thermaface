@@ -22,6 +22,7 @@ services:
   thermaface-mongo:
     image: mongo:latest # use the latest image.
     container_name: thermaface-mongo
+    restart: always
     environment: # set required env variables to access mongo
       MONGO_INITDB_DATABASE: thermafaceDB
     ports:
