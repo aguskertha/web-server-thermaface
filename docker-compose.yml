@@ -14,7 +14,7 @@ services:
       - PORT=80
       - APP_HOST=http://localhost:80
       - DB_SERVICE=thermaface-mongo
-      - DB_PORT=27017
+      - DB_PORT=385
       - DB_NAME=thermafaceDB
       - RAJA_KEY=1bd9484aeced5db67bbbcec7965097ca
       - RAJA_HOST=https://api.rajaongkir.com/starter
