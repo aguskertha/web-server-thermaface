@@ -25,10 +25,11 @@ services:
     restart: always
     environment: # set required env variables to access mongo
       MONGO_INITDB_DATABASE: thermafaceDB
+    command: mongod --port 385
     ports:
-      - 27017:27017
+      - 385:385
     volumes: # optional to preserve database after container is deleted.
-      - mongo-volume:/data/db
-volumes:
-  mongo-volume:
+      - ./data/db:/data/db
+# volumes:
+#   mongo-volume:
   
