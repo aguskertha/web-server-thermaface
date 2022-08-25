@@ -2,6 +2,7 @@ version: "3.7"
 services:
   thermaface-app:
     container_name: thermaface-app
+    restart: always
     build: .
     links:
       - thermaface-mongo
