@@ -57,9 +57,19 @@ const updateCounter = async (req, res, next) => {
     }
 }
 
+const deleteLogs = async (req, res, next) => {
+    try {
+        await Log.deleteMany()
+        res.json({message: 'Successfully deleted logs!'})
+    } catch (error) {
+        res.status(400).json({message: error.toString()})
+    }
+}
+
 module.exports = {
     createLog,
     getLogs,
     getLogByName,
-    updateCounter
+    updateCounter,
+    deleteLogs
 }

@@ -9,14 +9,6 @@ const validAdmin = [
 
 const index = async (req, res, next) => {
     try {
-        try {
-            let log = await axios.get('/api/log/localhost')
-            
-            let counter = Number(log.data.counter)+1;
-            const result = await axios.post('/api/log/update', {name:'localhost', counter})
-        } catch (error) {
-            await axios.post('/api/log/', {name:'localhost'})
-        }
         
         const products = await axios.get('/api/product')
         const clientID = req.session.clientID
@@ -35,10 +27,21 @@ const index = async (req, res, next) => {
             carts.forEach(cart => {
                 cartCount += cart.quantity
             });
+            if(!req.session.admin){
+                try {
+                    let log = await axios.get('/api/log/localhost')
+                    
+                    let counter = Number(log.data.counter)+1;
+                    const result = await axios.post('/api/log/update', {name:'localhost', counter})
+                } catch (error) {
+                    await axios.post('/api/log/', {name:'localhost'})
+                }
+            }
         }
         if(req.session.admin){
             admin = true
         }
+        console.log(testimonials.data[0].orders)
         res.render('index', {
             layout: 'layouts/main-home',
             products: products.data,
@@ -49,7 +52,8 @@ const index = async (req, res, next) => {
             logCount: logs.data[0].counter,
             orderCount: orders.data.length,
             productCount: products.data.length,
-            testiCount: testimonials.data.length
+            testiCount: testimonials.data.length,
+            testimonials : testimonials.data
         })
     } catch (error) {
         
@@ -168,5 +172,5 @@ module.exports = {
     renderClientPage,
     renderRegisterClient,
     registerClient,
-    logout
+    logout,
 }
